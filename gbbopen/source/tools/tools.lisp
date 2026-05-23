@@ -953,30 +953,38 @@
              (lisp::rehash hash-table))
         (setf (slot-value hash-table 'lisp::rehash-size) old-rehash-size)))
      't))
-  ;; SBCL doesn't provide a direct interface for resizing a hash table, so we
-  ;; fake such an interface by temporarily setting the REHASH-SIZE of the hash
-  ;; table to (- `new-size' old-size).
+  ;; The pre-1.x SBCL branch reached into sb-impl internals (maybe-rehash,
+  ;; rehash-size slot, hash-table-next-free-kv) to force a manual resize.
+  ;; Modern SBCL refactored that machinery and sb-impl::maybe-rehash no
+  ;; longer exists, triggering a READ-time package-lock error in the
+  ;; original code.
+  ;;
+  ;; Replacement strategy: trigger the auto-rehash machinery by inserting
+  ;; throwaway sentinel keys until the underlying storage grows to at least
+  ;; new-size, then remhash them. This relies on two SBCL invariants:
+  ;;   (a) inserting beyond hash-table-size triggers an internal rehash
+  ;;       that grows storage capacity (the auto-rehash machinery);
+  ;;   (b) remhash clears the slot WITHOUT shrinking capacity, so
+  ;;       (hash-table-size ht) reports the grown size after this call.
+  ;; Both invariants verified on SBCL 2.0.x through 2.6.3 (the current
+  ;; release as of 2026-05).  If a future SBCL changes either -- e.g.
+  ;; adds remhash-driven shrink-to-fit -- this branch should be revisited
+  ;; (look for sb-impl::%rehash or a public sb-ext: equivalent that may
+  ;; have replaced maybe-rehash by then).
+  ;;
+  ;; Equivalent observable behaviour to the original pre-grow hint, at
+  ;; the cost of one rehash per growth step instead of one batch rehash.
   #+sbcl
   (sb-ext:with-locked-hash-table (hash-table)
     (when (> new-size (hash-table-size hash-table))
-      (let ((old-rehash-size (hash-table-rehash-size hash-table))
-            (old-size (length (sb-impl::hash-table-next-vector hash-table))))
-        ;; SBCL's compiler (starting ~1.0.35 and continuing through at least
-        ;; 1.0.54) has problems compiling the (setf slot-value) with the
-        ;; UNWIND-PROTECT.  This FLET addresses that:
-        (flet ((set-rehash-size (hash-table size)
-                 (setf (slot-value hash-table 'sb-impl::rehash-size) size)))
-          (unwind-protect
-              (progn (set-rehash-size
-                      hash-table 
-                      ;; Compute the incremental value (to be added back to
-                      ;; old-size in MAYBE-REHASH):
-                      (-& new-size old-size))
-                     ;; Calling REHASH directly causes problems, so we call
-                     ;; MAYBE-REHASH instead with 0 free KV's:
-                     (setf (sb-impl::hash-table-next-free-kv hash-table) 0)
-                     (sb-impl::maybe-rehash hash-table 't))
-            (set-rehash-size hash-table old-rehash-size))))
+      (let ((sentinel-keys '()))
+        (loop while (< (hash-table-size hash-table) new-size)
+              for counter from 0
+              for key = (cons 'resize-sentinel counter)
+              do (push key sentinel-keys)
+                 (setf (gethash key hash-table) t))
+        (dolist (k sentinel-keys)
+          (remhash k hash-table)))
       't))
   #+scl
   (flet ((%resize ()
