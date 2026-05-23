@@ -43,7 +43,7 @@
 
 (with-full-optimization ()
   (defun vowelp (string pos)
-    (declare (type simple-base-string string)
+    (declare (type simple-string string)
              (fixnum pos))
     (when (<=& 0 pos (length string))
       ;; optimized (member (char string pos) '(#\E #\A #\O #\I #\U #\Y)):
@@ -58,7 +58,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun char-at (string index candidate-char)
-  (declare (type simple-base-string string))
+  (declare (type simple-string string))
   (eql (char string index) candidate-char))
 
 (defcm char-at (string index candidate-char)
@@ -67,7 +67,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun char-member-at (string index &rest candidate-chars)
-  (declare (type simple-base-string string)
+  (declare (type simple-string string)
            (dynamic-extent candidate-chars))
   (member (char string index) candidate-chars))
 
@@ -80,12 +80,12 @@
 
 (with-full-optimization ()
   (defun string-at (string start &rest candidate-strings)
-    (declare (type simple-base-string string)
+    (declare (type simple-string string)
              (fixnum start)
              (dynamic-extent candidate-strings))
     (when (>=& start 0)
       (dolist (candidate candidate-strings)
-        (declare (type simple-base-string candidate))
+        (declare (type simple-string candidate))
         (when (string= string candidate 
                        :start1 start
                        :end1 (min& (length string)
@@ -834,9 +834,9 @@
           (otherwise
            (incf& current 1))))
       
-      (setf primary (coerce primary 'simple-base-string))
+      (setf primary (coerce primary 'simple-string))
       (if (plusp& (fill-pointer secondary))
-          (values primary (coerce secondary 'simple-base-string))
+          (values primary (coerce secondary 'simple-string))
           primary))))
 
 ;;; ===========================================================================
