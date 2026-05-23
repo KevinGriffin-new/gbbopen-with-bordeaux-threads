@@ -645,9 +645,6 @@
 	;; so, more eq-lossage handling is required in
 	;; fixup-function-objects-part2:
 	#+clisp let #+clisp ()
-	#+sbcl
-	(eval-when (:compile-toplevel :load-toplevel :execute)
-	  (sb-pcl::preinform-compiler-about-class-type ',unit-class-name))
 	,@(when exports
 	    `((eval-when (:compile-toplevel :load-toplevel :execute)
 		(export ',exports))))
