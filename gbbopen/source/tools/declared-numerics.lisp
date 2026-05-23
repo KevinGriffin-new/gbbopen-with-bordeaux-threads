@@ -122,7 +122,7 @@
    '(lispworks:fixnump lispworks:short-float-p hcl:single-float-p
      hcl:double-float-p lispworks:long-float-p)
    #+sbcl
-   '(sb-int:fixnump sb-int:short-float-p sb-int:single-float-p
+   '(sb-int:fixnump sb-int:single-float-p
      sb-int:double-float-p sb-int:long-float-p)
    #+scl
    '(ext:fixnump lisp::short-float-p kernel:single-float-p
@@ -133,11 +133,11 @@
                           long-float-p))))
 
 ;;; CLs that don't have short-float-p predicates:
-#+(or abcl allegro ecl gcl)
+#+(or abcl allegro ecl gcl sbcl)
 (defun short-float-p (obj)
   (typep obj 'short-float))
 
-#+(or abcl allegro ecl gcl)
+#+(or abcl allegro ecl gcl sbcl)
 (defcm short-float-p (obj)
   `(typep ,obj 'short-float))
 
