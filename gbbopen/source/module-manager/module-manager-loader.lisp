@@ -328,11 +328,14 @@
              #+(and x86-64 darwin) "mac86-64"
              #+(and x86 darwin) "mac86"
              #+(and ppc darwin) "macppc"
+             #+(and (or arm64 aarch64) darwin) "mac-arm64" ; Apple Silicon (M1/M2/M3/M4)
              #+(and x86 linux) "linux86"
              #+(and x86-64 linux) "linux86-64" ; Thanks to Eric Menard
+             #+(and (or arm64 aarch64) linux) "linux-arm64" ; Raspberry Pi 5, AWS Graviton, etc.
              #+sparc "sparc"
              #+(and x86 (not linux) (not darwin)) "windows"
-             #+(and x86-64 (not linux) (not darwin)) "windows-64")
+             #+(and x86-64 (not linux) (not darwin)) "windows-64"
+             #+(and (or arm64 aarch64) (not linux) (not darwin)) "windows-arm64") ; Windows on ARM
             "sbcl"
             nil
             (lisp-implementation-version))
