@@ -14,12 +14,16 @@
 #
 # Tasks and content otherwise identical to amd64.yml.
 
-image: alpine/edge
+# sr.ht doesn't have alpine/edge for aarch64 (verified by job
+# #1768476 failing at boot); debian/bookworm has both archs and
+# both sbcl + ecl in the default repos.
+image: debian/bookworm
 arch: aarch64
 packages:
   - sbcl
   - ecl
   - curl
+  - ca-certificates
 sources:
   - https://git.sr.ht/~kevin_griffin/gbbopen-with-bordeaux-threads
 environment:
