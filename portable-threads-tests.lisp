@@ -82,6 +82,22 @@
   #+ecl  (ext:gc t)
   #-(or sbcl ecl) nil)
 
+(defun force-conservative-gc-eviction ()
+  "Allocate enough short-lived garbage to evict any stale references
+to recently-deceased objects that SBCL's conservative GC might still
+be pinning via stack slots or registers. Without this, weak-pointer-
+based collectibility tests can spuriously fail on environments where
+the optimizer or calling convention happens to leave a probe target
+in a register that the conservative scanner treats as live.
+
+Verified empirically: SBCL 2.6.4 Linux x86_64 on archlinux CI was
+failing memleak-condition-variable-is-collectible without this
+eviction step; the same test passed under SBCL 2.6.3 macOS ARM64."
+  (declare (notinline make-array))
+  (dotimes (i 10000)
+    (make-array 100 :initial-element 0))
+  nil)
+
 (defun make-weak-pointer-to (thing)
   #+sbcl (sb-ext:make-weak-pointer thing)
   #+ecl  (ext:make-weak-pointer thing)
@@ -948,6 +964,7 @@ see the global value, not the dynamic let-binding of the parent."
 #+sbcl
 (test memleak-make-lock-is-collectible
   (let ((wp (make-weak-pointer-to (pt:make-lock :name "ephemeral-lock"))))
+    (force-conservative-gc-eviction)
     (full-gc) (full-gc)
     (is (null (weak-pointer-target wp))
         "make-lock retained a strong reference somewhere — lock survived a full GC")))
@@ -955,6 +972,7 @@ see the global value, not the dynamic let-binding of the parent."
 #+sbcl
 (test memleak-make-recursive-lock-is-collectible
   (let ((wp (make-weak-pointer-to (pt:make-recursive-lock :name "ephemeral-rl"))))
+    (force-conservative-gc-eviction)
     (full-gc) (full-gc)
     (is (null (weak-pointer-target wp))
         "make-recursive-lock retained a strong reference — recursive lock survived a full GC")))
@@ -962,6 +980,7 @@ see the global value, not the dynamic let-binding of the parent."
 #+sbcl
 (test memleak-condition-variable-is-collectible
   (let ((wp (make-weak-pointer-to (pt:make-condition-variable))))
+    (force-conservative-gc-eviction)
     (full-gc) (full-gc)
     (is (null (weak-pointer-target wp))
         "make-condition-variable retained a strong reference — CV survived a full GC")))
@@ -977,6 +996,7 @@ large object it captured must be collectible."
     (is-true (join-with-deadline th :timeout 5.0))
     (setf captured nil
           th nil)
+    (force-conservative-gc-eviction)
     (full-gc) (full-gc) (full-gc)
     (is (null (weak-pointer-target wp))
         "spawn-thread retained the closure's captured array after the thread exited and was joined")))
