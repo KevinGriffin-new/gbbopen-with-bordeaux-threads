@@ -451,6 +451,24 @@ the keyword leaked through."
   (let ((cv (pt:make-condition-variable)))
     (is-true (portable-threads::condition-variable-cv cv))))
 
+(test condition-variable-signal-errors-without-lock-held
+  "GBBopen contract: condition-variable-signal called without holding
+the CV's embedded lock must signal an error."
+  (let ((cv (pt:make-condition-variable)))
+    (signals simple-error (pt:condition-variable-signal cv))))
+
+(test condition-variable-broadcast-errors-without-lock-held
+  "Same contract for condition-variable-broadcast."
+  (let ((cv (pt:make-condition-variable)))
+    (signals simple-error (pt:condition-variable-broadcast cv))))
+
+(test condition-variable-signal-does-not-error-with-lock-held
+  "Sanity: with the lock held, signal must NOT error (otherwise the
+lock-held check is broken)."
+  (let ((cv (pt:make-condition-variable)))
+    (finishes
+      (pt:with-lock-held (cv) (pt:condition-variable-signal cv)))))
+
 (test condition-variable-signal-wakes-one-waiter
   (let* ((cv (pt:make-condition-variable))
          (woken 0)

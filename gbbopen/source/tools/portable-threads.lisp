@@ -215,11 +215,23 @@ bt2:condition-wait already returns this shape; no translation needed."
                                      :timeout seconds))
 
 (defun condition-variable-signal (cv)
-  "Wake one waiter on CV."
+  "Wake one waiter on CV. Caller MUST hold the CV's embedded lock —
+errors otherwise. GBBopen's contract requires this check; bt2:
+condition-notify does not enforce it itself (and POSIX
+pthread_cond_signal allows the unlocked-signal case, with
+implementation-defined behaviour). Catching the misuse explicitly
+here mirrors what the original portable-threads.lisp did."
+  (unless (thread-holds-lock-p cv)
+    (error "~s called without holding the CV's lock"
+           'condition-variable-signal))
   (bordeaux-threads-2:condition-notify (condition-variable-cv cv)))
 
 (defun condition-variable-broadcast (cv)
-  "Wake all waiters on CV."
+  "Wake all waiters on CV. Caller MUST hold the CV's embedded lock —
+errors otherwise (same rationale as condition-variable-signal)."
+  (unless (thread-holds-lock-p cv)
+    (error "~s called without holding the CV's lock"
+           'condition-variable-broadcast))
   (bordeaux-threads-2:condition-broadcast (condition-variable-cv cv)))
 
 ;;; ===========================================================================
