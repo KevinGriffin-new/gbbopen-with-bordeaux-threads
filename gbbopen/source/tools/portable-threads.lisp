@@ -81,14 +81,27 @@
 ;;; matching GBBopen's calling convention. They no longer need wrapping.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(bordeaux-threads-2:all-threads
-            bordeaux-threads-2:current-thread
+  (import '(bordeaux-threads-2:current-thread
             bordeaux-threads-2:make-lock
             bordeaux-threads-2:make-recursive-lock
             bordeaux-threads-2:thread-alive-p
             bordeaux-threads-2:thread-name
             bordeaux-threads-2:thread-yield
             bordeaux-threads-2:threadp)))
+
+;;; bt2:all-threads can include recently-dead threads (the bt2:thread
+;;; wrapper outlives the underlying native thread by a window during
+;;; which the wrapper is still in bt2's internal registry). GBBopen's
+;;; portable-threads-test expects (length (all-threads)) to return to
+;;; baseline after a batch of spawn-and-die threads exits; wrap
+;;; bt2:all-threads with a thread-alive-p filter to honour that
+;;; contract.
+(defun all-threads ()
+  "Return the currently-live threads. Filters out bt2:thread wrappers
+whose underlying native thread has exited but whose wrapper bt2 is
+still holding in its internal registry."
+  (remove-if-not #'bordeaux-threads-2:thread-alive-p
+                 (bordeaux-threads-2:all-threads)))
 
 ;;; ===========================================================================
 ;;; with-lock-held / with-recursive-lock-held / without-lock-held

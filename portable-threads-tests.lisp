@@ -233,6 +233,22 @@ silently at load time."
 (test all-threads-includes-current
   (is-true (member (pt:current-thread) (coerce (pt:all-threads) 'list))))
 
+(test all-threads-excludes-dead-threads
+  "GBBopen contract: after a spawn-and-die thread exits and is joined,
+it must not appear in (all-threads). bt2:all-threads holds onto
+recently-dead bt2:thread wrappers; the shim wraps with a thread-
+alive-p filter to honour the contract."
+  (let ((baseline (length (pt:all-threads))))
+    (let ((threads
+            (loop repeat 5
+                  collect (pt:spawn-thread "dead-soon" (lambda () nil)))))
+      (dolist (th threads) (join-with-deadline th :timeout 2.0)))
+    (sleep 0.1)
+    (let ((after (length (pt:all-threads))))
+      (is (= baseline after)
+          "(length (all-threads)) grew from ~a to ~a after 5 spawn-and-die"
+          baseline after))))
+
 ;;; ---------------------------------------------------------------------
 ;;; 3. Lock constructors take :name keyword (bt2 native)
 
