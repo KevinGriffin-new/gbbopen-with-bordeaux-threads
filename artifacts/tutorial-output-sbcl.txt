@@ -1,0 +1,1626 @@
+This is SBCL 2.6.3, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+;; GBBopen is installed in /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/
+;; Your "home" directory is /Users/kevin/
+;; Predefining :SWANK-BACKEND package for SLIME...
+;; Adding :old-event-names to *FEATURES*...
+;; GBBopen is installed in /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/
+;; Your "home" directory is /Users/kevin/
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp
+; in: DEFMETHOD DOCUMENTATION (T (EQL 'DIRECTORY))
+;     (MODULE-MANAGER::MM-MODULE.DOCUMENTATION
+;      (MODULE-MANAGER::GET-MM-DIRECTORY MODULE-MANAGER::OBJECT))
+; 
+; caught STYLE-WARNING:
+;   undefined function: MODULE-MANAGER::MM-MODULE.DOCUMENTATION
+; 
+; compilation unit finished
+;   Undefined function:
+;     MM-MODULE.DOCUMENTATION
+;   caught 1 STYLE-WARNING condition
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp
+; in: DEFMETHOD (SETF DOCUMENTATION) (T T (EQL 'DIRECTORY))
+;     (MODULE-MANAGER::MM-MODULE.DOCUMENTATION
+;      (MODULE-MANAGER::GET-MM-DIRECTORY MODULE-MANAGER::OBJECT))
+; --> FUNCALL 
+; ==>
+;   1
+; 
+; caught STYLE-WARNING:
+;   undefined function: (COMMON-LISP:SETF MODULE-MANAGER::MM-MODULE.DOCUMENTATION)
+; 
+; compilation unit finished
+;   Undefined function:
+;     (SETF MM-MODULE.DOCUMENTATION)
+;   caught 1 STYLE-WARNING condition
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp
+; in: DEFUN COMPUTE-RELATIVE-DIRECTORY
+;     (MODULE-MANAGER::MM-MODULE.SUBDIRECTORIES MODULE-MANAGER:MODULE)
+; 
+; caught STYLE-WARNING:
+;   undefined type: MODULE-MANAGER::MM-MODULE
+
+;     (MODULE-MANAGER::MM-MODULE.DIRECTORY MODULE-MANAGER:MODULE)
+; 
+; caught STYLE-WARNING:
+;   undefined type: MODULE-MANAGER::MM-MODULE
+; 
+; caught STYLE-WARNING:
+;   undefined type: MODULE-MANAGER::MM-MODULE
+
+; 
+; caught STYLE-WARNING:
+;   57 more uses of undefined type MM-MODULE
+; 
+; compilation unit finished
+;   Undefined type:
+;     MM-MODULE
+;   caught 4 STYLE-WARNING conditions
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp
+; in: DEFMETHOD DOCUMENTATION (T (EQL 'MODULE))
+;     (MODULE-MANAGER::GET-MODULE MODULE-MANAGER::OBJECT)
+; 
+; caught STYLE-WARNING:
+;   undefined function: MODULE-MANAGER::GET-MODULE
+; 
+; compilation unit finished
+;   Undefined function:
+;     GET-MODULE
+;   caught 1 STYLE-WARNING condition
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp
+; in: DEFMETHOD (SETF DOCUMENTATION) (T T (EQL 'MODULE))
+;     (MODULE-MANAGER::GET-MODULE MODULE-MANAGER::OBJECT)
+; 
+; caught STYLE-WARNING:
+;   undefined function: MODULE-MANAGER::GET-MODULE
+; 
+; compilation unit finished
+;   Undefined function:
+;     GET-MODULE
+;   caught 1 STYLE-WARNING condition
+
+
+;;; ===============================================================
+;;; Environment
+;;; ===============================================================
+;;; Lisp:     SBCL 2.6.3
+;;; Machine:  ARM64 / Apple M1 Max
+;;; bt2:      0.9.4
+;;; Shim:     (:portable-threads package missing — shim not loaded?)
+;;; Run at:   2026-05-25 12:04:25 UTC
+
+
+;;; ===============================================================
+;;; Phase 1: compile-gbbopen
+;;; ===============================================================
+;;; tutorial-runner: disabled :compile-gbbopen auto-quit after-form.
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp" (written 25 MAY 2026 12:02:07 PM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager.lisp
+; in: DEFUN CONVERT-DESCRIPTIVE-DATE
+;     (STRING-EQUAL MODULE-MANAGER::DESCRIPTIVE-DATE ">=" :START1 3 :END1 5)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a SIMPLE-STRING, not a (SIMPLE-ARRAY CHARACTER (*)).
+
+; in: DEFUN PARSE-DATE
+;     (STRING-EQUAL ">=" STRING :START2 MODULE-MANAGER::END2 :END2
+;                   (INCF MODULE-MANAGER::END2 2))
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The second argument is a SIMPLE-STRING, not a (SIMPLE-ARRAY CHARACTER (*)).
+
+; in: DEFUN COMPILE-MODULE
+;     (OR MODULE-MANAGER::PROPAGATE? MODULE-MANAGER::SPECIFIED-MODULE?)
+; --> IF 
+; ==>
+;   MODULE-MANAGER::SPECIFIED-MODULE?
+; 
+; note: deleting unreachable code
+; 
+; note: deleting unreachable code
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/module-manager/module-manager.fasl
+; compilation finished in 0:00:00.218
+
+;;; ------------------------------------------------------------------------
+;;;  Module-Manager System 1.6
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ------------------------------------------------------------------------
+
+; 
+; compilation unit finished
+;   printed 4 notes
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :AGENDA-SHELL-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/module-manager/module-manager-user.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/module-manager/module-manager-user.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/preamble.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/preamble.fasl
+; compilation finished in 0:00:00.012
+
+;;; ------------------------------------------------------------------------
+;;;  GBBopen Tools 1.5
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ------------------------------------------------------------------------
+
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/declarations.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/declarations.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/declared-numerics.lisp" (written 25 MAY 2026 12:02:07 PM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/declared-numerics.lisp
+; in: EVAL-WHEN (:COMPILE-TOPLEVEL :LOAD-TOPLEVEL :EXECUTE)
+;     (PUSHNEW :FIXNUM-SIZE-BELOW-29 *FEATURES*)
+; 
+; note: deleting unreachable code
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/declared-numerics.fasl
+; compilation finished in 0:00:00.141
+WARNING: SHORT-FLOAT is equivalent to SINGLE-FLOAT on SBCL running on ARM64.
+WARNING: LONG-FLOAT is equivalent to DOUBLE-FLOAT on SBCL running on ARM64.
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/defflags.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/defflags.fasl
+; compilation finished in 0:00:00.005
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/clos-interface.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/clos-interface.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/tools.lisp" (written 25 MAY 2026 12:02:07 PM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/tools.lisp
+; in: DEFCM SOLE-ELEMENT
+;     (GBBOPEN-TOOLS:DEFCM
+;       GBBOPEN-TOOLS:SOLE-ELEMENT
+;       (LIST)
+;       (GBBOPEN-TOOLS:WITH-ONCE-ONLY-BINDINGS (LIST)
+;         `(PROG1 (FIRST ,LIST)
+;            (WHEN (REST ,LIST) (GBBOPEN-TOOLS::SOLE-ELEMENT-VIOLATION ,LIST)))))
+; --> PROGN EVAL-WHEN 
+; ==>
+;   (SB-C::%DEFINE-COMPILER-MACRO 'GBBOPEN-TOOLS:SOLE-ELEMENT
+;                                 (SB-INT:NAMED-LAMBDA (COMPILER-MACRO
+;                                                       GBBOPEN-TOOLS:SOLE-ELEMENT)
+;                                     (#:EXPR #:ENV)
+;                                   (DECLARE (SB-C::LAMBDA-LIST (LIST)))
+;                                   (DECLARE (IGNORE #:ENV))
+;                                   (SB-INT:NAMED-DS-BIND (:MACRO
+;                                                          GBBOPEN-TOOLS:SOLE-ELEMENT
+;                                                          . DEFINE-COMPILER-MACRO)
+;                                       (LIST)
+;                                       (SB-C::COMPILER-MACRO-ARGS #:EXPR)
+;                                     (DECLARE (SB-C::CONSTANT-VALUE LIST)
+;                                              (SB-C::NO-COMPILER-MACRO
+;                                               GBBOPEN-TOOLS:SOLE-ELEMENT))
+;                                     (BLOCK GBBOPEN-TOOLS:SOLE-ELEMENT
+;                                       (GBBOPEN-TOOLS:WITH-ONCE-ONLY-BINDINGS #
+;                                         `#)))))
+; 
+; caught STYLE-WARNING:
+;   2 calls to GBBOPEN-TOOLS:SOLE-ELEMENT were compiled before a compiler-macro was
+;   defined for it. A declaration of NOTINLINE at the call sites will eliminate
+;   this warning, as will defining the compiler-macro before its first potential
+;   use.
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/tools.fasl
+; compilation finished in 0:00:00.132
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/pseudo-probabilities.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/pseudo-probabilities.fasl
+; compilation finished in 0:00:00.062
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/defconstruct.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/defconstruct.fasl
+; compilation finished in 0:00:00.005
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/define-class.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/define-class.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/gbbopen-instance.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/gbbopen-instance.fasl
+; compilation finished in 0:00:00.004
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/date-and-time.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/date-and-time.fasl
+; compilation finished in 0:00:00.128
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/offset-universal-time.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/offset-universal-time.lisp
+; in: LET ((FIXNUM-SIZE (1+ (INTEGER-LENGTH MOST-POSITIVE-FIXNUM))))
+;     (GBBOPEN-TOOLS::SMALL-FIXNUM-OT-WARNING)
+; 
+; note: deleting unreachable code
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/offset-universal-time.fasl
+; compilation finished in 0:00:00.006
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/atable.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/atable.fasl
+; compilation finished in 0:00:00.086
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/print-object-for.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/print-object-for.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/read-object.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/read-object.fasl
+; compilation finished in 0:00:00.052
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/duplicate-instance.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/duplicate-instance.fasl
+; compilation finished in 0:00:00.007
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/llrb-tree.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/llrb-tree.fasl
+; compilation finished in 0:00:00.047
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/epilogue.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/epilogue.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/portable-threads.lisp" (written 25 MAY 2026 12:03:23 PM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/portable-threads.fasl
+; compilation finished in 0:00:00.043
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/scheduled-periodic-functions.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/scheduled-periodic-functions.fasl
+; compilation finished in 0:00:00.047
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/polling-functions.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/polling-functions.fasl
+; compilation finished in 0:00:00.005
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/os-interface.lisp" (written 25 MAY 2026 12:02:07 PM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/os-interface.lisp
+; in: DEFUN (SETF GETENV)
+;     (MODULE-MANAGER:NEED-TO-PORT (SETF GBBOPEN-TOOLS:GETENV))
+; 
+; caught WARNING:
+;   (SETF GETENV) needs to be defined for SBCL running on ARM64.
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/os-interface.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/preamble.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/preamble.fasl
+; compilation finished in 0:00:00.006
+
+;;; ------------------------------------------------------------------------
+;;;  GBBopen 1.5
+;;;
+;;;    GBBopen is open-source software
+;;;    (see /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/LICENSE)
+;;; ------------------------------------------------------------------------
+
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/utilities.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/utilities.fasl
+; compilation finished in 0:00:00.034
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/unit-metaclasses.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/unit-metaclasses.fasl
+; compilation finished in 0:00:00.049
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/units.lisp" (written 25 MAY 2026 12:02:07 PM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/units.lisp
+; in: DEFUN MAP-EXTENDED-UNIT-CLASSES-SORTED
+;     (SORT GBBOPEN::CLASSES #'GBBOPEN::FN)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a SEQUENCE, not a LIST.
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a SEQUENCE, not a (OR NULL VECTOR).
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/units.fasl
+; compilation finished in 0:00:00.071
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/event-metaclasses.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/event-metaclasses.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/events.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/events.fasl
+; compilation finished in 0:00:00.115
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/system-events.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/system-events.fasl
+; compilation finished in 0:00:00.014
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/links.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/links.fasl
+; compilation finished in 0:00:00.029
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/instances.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/instances.lisp
+; in: DEFCM INSTANCE-DELETED-P
+;     (GBBOPEN-TOOLS:DEFCM
+;       GBBOPEN:INSTANCE-DELETED-P
+;       (GBBOPEN::INSTANCE)
+;       (GBBOPEN-TOOLS:WITH-ONCE-ONLY-BINDINGS (GBBOPEN::INSTANCE)
+;         `(OR (TYPEP ,GBBOPEN::INSTANCE 'GBBOPEN:DELETED-UNIT-INSTANCE)
+;              (AND (SLOT-BOUNDP ,GBBOPEN::INSTANCE 'GBBOPEN::%%SPACE-INSTANCES%%)
+;                   (EQ # ':DELETED)))))
+; --> PROGN EVAL-WHEN 
+; ==>
+;   (SB-C::%DEFINE-COMPILER-MACRO 'GBBOPEN:INSTANCE-DELETED-P
+;                                 (SB-INT:NAMED-LAMBDA (COMPILER-MACRO
+;                                                       GBBOPEN:INSTANCE-DELETED-P)
+;                                     (#:EXPR #:ENV)
+;                                   (DECLARE
+;                                    (SB-C::LAMBDA-LIST (GBBOPEN::INSTANCE)))
+;                                   (DECLARE (IGNORE #:ENV))
+;                                   (SB-INT:NAMED-DS-BIND (:MACRO
+;                                                          GBBOPEN:INSTANCE-DELETED-P
+;                                                          . DEFINE-COMPILER-MACRO)
+;                                       (GBBOPEN::INSTANCE)
+;                                       (SB-C::COMPILER-MACRO-ARGS #:EXPR)
+;                                     (DECLARE
+;                                      (SB-C::CONSTANT-VALUE GBBOPEN::INSTANCE)
+;                                      (SB-C::NO-COMPILER-MACRO
+;                                       GBBOPEN:INSTANCE-DELETED-P))
+;                                     (BLOCK GBBOPEN:INSTANCE-DELETED-P
+;                                       (GBBOPEN-TOOLS:WITH-ONCE-ONLY-BINDINGS #
+;                                         `#)))))
+; 
+; caught STYLE-WARNING:
+;   1 call to GBBOPEN:INSTANCE-DELETED-P was compiled before a compiler-macro was
+;   defined for it. A declaration of NOTINLINE at the call site will eliminate this
+;   warning, as will defining the compiler-macro before its first potential use.
+
+; in: DEFCM INCOMPLETE-INSTANCE-MARK-SET-P
+;     (GBBOPEN-TOOLS:DEFCM
+;       GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P
+;       (GBBOPEN::INSTANCE)
+;       `(GBBOPEN-TOOLS:PLUSP&
+;         (LOGAND
+;          (GBBOPEN-TOOLS:&
+;           (GBBOPEN::STANDARD-UNIT-INSTANCE.%%MARKS%% ,GBBOPEN::INSTANCE))
+;          2)))
+; --> PROGN EVAL-WHEN 
+; ==>
+;   (SB-C::%DEFINE-COMPILER-MACRO 'GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P
+;                                 (SB-INT:NAMED-LAMBDA (COMPILER-MACRO
+;                                                       GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P)
+;                                     (#:EXPR #:ENV)
+;                                   (DECLARE
+;                                    (SB-C::LAMBDA-LIST (GBBOPEN::INSTANCE)))
+;                                   (DECLARE (IGNORE #:ENV))
+;                                   (SB-INT:NAMED-DS-BIND (:MACRO
+;                                                          GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P
+;                                                          . DEFINE-COMPILER-MACRO)
+;                                       (GBBOPEN::INSTANCE)
+;                                       (SB-C::COMPILER-MACRO-ARGS #:EXPR)
+;                                     (DECLARE
+;                                      (SB-C::CONSTANT-VALUE GBBOPEN::INSTANCE)
+;                                      (SB-C::NO-COMPILER-MACRO
+;                                       GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P))
+;                                     (BLOCK
+;                                         GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P
+;                                       `(GBBOPEN-TOOLS:PLUSP& #)))))
+; 
+; caught STYLE-WARNING:
+;   2 calls to GBBOPEN::INCOMPLETE-INSTANCE-MARK-SET-P were compiled before a
+;   compiler-macro was defined for it. A declaration of NOTINLINE at the call sites
+;   will eliminate this warning, as will defining the compiler-macro before its
+;   first potential use.
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/instances.fasl
+; compilation finished in 0:00:00.125
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/spaces.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/spaces.fasl
+; compilation finished in 0:00:00.075
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/storage.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/storage.fasl
+; compilation finished in 0:00:00.029
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/find.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/find.lisp
+; in: DEFSTRUCT OPTIMIZED-PATTERN
+;     (DEFSTRUCT
+;         (GBBOPEN::OPTIMIZED-PATTERN (:CONC-NAME "OPTIMIZED-PATTERN.")
+;          (:COPIER NIL))
+;       (GBBOPEN::DISJUNCTIVE-DIMENSIONAL-EXTENTS NIL)
+;       (GBBOPEN::PATTERN NIL))
+; --> EVAL-WHEN 
+; ==>
+;   (SB-KERNEL::%COMPILER-DEFSTRUCT
+;    '#<SB-KERNEL:DEFSTRUCT-DESCRIPTION GBBOPEN::OPTIMIZED-PATTERN {7007A1A613}>
+;    '#(#<SB-KERNEL:LAYOUT for T {7003033803}>
+;       #<SB-KERNEL:LAYOUT (ID=1) for STRUCTURE-OBJECT {7003033883}>))
+; 
+; caught STYLE-WARNING:
+;   Previously compiled call to
+;   GBBOPEN::OPTIMIZED-PATTERN.DISJUNCTIVE-DIMENSIONAL-EXTENTS could not be inlined
+;   because the structure definition for GBBOPEN::OPTIMIZED-PATTERN was not yet
+;   seen. To avoid this warning, DEFSTRUCT should precede references to the
+;   affected functions, or they must be declared locally notinline at each call
+;   site.
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/find.fasl
+; compilation finished in 0:00:00.194
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/unstructured-storage.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/unstructured-storage.fasl
+; compilation finished in 0:00:00.007
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/boolean-storage.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/boolean-storage.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/hashed-storage.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/hashed-storage.fasl
+; compilation finished in 0:00:00.019
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/1d-uniform-storage.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/1d-uniform-storage.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/2d-uniform-storage.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/2d-uniform-storage.fasl
+; compilation finished in 0:00:00.031
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/save-restore.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/save-restore.fasl
+; compilation finished in 0:00:00.032
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/epilogue.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/epilogue.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/queue.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/queue.fasl
+; compilation finished in 0:00:00.020
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/control-shells/agenda-shell-metaclasses.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/control-shells/agenda-shell-metaclasses.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/control-shells/agenda-shell-metering.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/control-shells/agenda-shell-metering.fasl
+; compilation finished in 0:00:00.036
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/control-shells/agenda-shell.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/control-shells/agenda-shell.fasl
+; compilation finished in 0:00:00.133
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/gbbopen-user.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/gbbopen-user.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/control-shells/agenda-shell-user.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/control-shells/agenda-shell-user.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/control-shells/test/agenda-shell-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/control-shells/test/agenda-shell-test.fasl
+; compilation finished in 0:00:00.009
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :GBBOPEN-TOOLS-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/gbbopen-tools-user.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/gbbopen-tools-user.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/test/llrb-tree-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/test/llrb-tree-test.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/test/gbbopen-tools-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/test/gbbopen-tools-test.fasl
+; compilation finished in 0:00:00.031
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :GBBOPEN-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/test/basic-tests.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/test/basic-tests.lisp
+; in: DEFINE-UNIT-CLASS UC-SEQUENCE
+;     (GBBOPEN:DEFINE-UNIT-CLASS GBBOPEN-USER::UC-SEQUENCE (GBBOPEN-USER::UC-4) NIL
+;                                (:DIMENSIONAL-VALUES
+;                                 (GBBOPEN-USER::X :POINT :SEQUENCE
+;                                  GBBOPEN-USER::X)
+;                                 (GBBOPEN-USER::Y :POINT :SEQUENCE
+;                                  GBBOPEN-USER::Y)))
+; 
+; caught WARNING:
+;   Support for :SEQUENCE composite dimensional values is not completed.
+; 
+; caught WARNING:
+;   Support for :SEQUENCE composite dimensional values is not completed.
+
+; in: DEFINE-UNIT-CLASS UC-SERIES
+;     (GBBOPEN:DEFINE-UNIT-CLASS GBBOPEN-USER::UC-SERIES (GBBOPEN-USER::UC-4)
+;                                ((TIME :INITFORM NIL))
+;                                (:DIMENSIONAL-VALUES (TIME :POINT :SEQUENCE TIME)
+;                                 (GBBOPEN-USER::X :POINT :ASCENDING-SERIES TIME
+;                                  GBBOPEN-USER::X)
+;                                 (GBBOPEN-USER::Y :POINT :ASCENDING-SERIES TIME
+;                                  GBBOPEN-USER::Y)))
+; 
+; caught WARNING:
+;   Support for :SEQUENCE composite dimensional values is not completed.
+; 
+; caught WARNING:
+;   Support for :ASCENDING-SERIES composite dimensional values is not completed.
+; 
+; caught WARNING:
+;   Support for :ASCENDING-SERIES composite dimensional values is not completed.
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/test/basic-tests.fasl
+; compilation finished in 0:00:00.073
+;; All link definitions are consistent.
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/test/patches/basic-tests-p001.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/test/patches/basic-tests-p001.fasl
+; compilation finished in 0:00:00.001
+;; Simple example patch loaded!
+;; Applied patch 1 to module :GBBOPEN-TEST.
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/test/patches/basic-tests-p002.lisp" (written 13 APR 2020 11:51:03 AM):
+;; Defining compile-time-only-macro-for-patch...
+;; Defining macro-for-patch at compile & load time...
+;; Using macro-for-patch at compile & load time...
+;; Using compile-time-only-macro-for-patch...
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/test/patches/basic-tests-p002.fasl
+; compilation finished in 0:00:00.002
+;; More complex example patch started!
+;; Defining macro-for-patch at compile & load time...
+;; Using macro-for-patch at load time...
+;; Using macro-for-patch at compile & load time...
+;; More complex example patch finished!
+;; Applied patch 2 to module :GBBOPEN-TEST.
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :TUTORIAL-EXAMPLE...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/examples/tutorial.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/examples/tutorial.fasl
+; compilation finished in 0:00:00.015
+;; All link definitions are consistent.
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :STREAMING...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/extensions/streaming.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/extensions/streaming.fasl
+; compilation finished in 0:00:00.108
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :CL-TIMING...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/timing/cl-timing.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/timing/cl-timing.lisp
+; in: DEFUN COMPUTE-ATABLE-TRANSITIONS
+;     (GBBOPEN-TOOLS-USER::DO-IT EQ T #'IDENTITY)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQ NIL #'IDENTITY)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQL T #'IDENTITY)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQL NIL #'IDENTITY)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQUAL T #'GBBOPEN-TOOLS-USER::STRING-IT)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQUAL NIL #'GBBOPEN-TOOLS-USER::STRING-IT)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQUALP T #'GBBOPEN-TOOLS-USER::STRING-IT)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+;     (GBBOPEN-TOOLS-USER::DO-IT EQUALP NIL #'GBBOPEN-TOOLS-USER::STRING-IT)
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-AT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; --> GBBOPEN-TOOLS:WITH-FULL-OPTIMIZATION LOCALLY FLET 
+; --> GBBOPEN-TOOLS-USER::TIME-HT BLOCK LET DOTIMES DO BLOCK LET TAGBODY UNLESS 
+; --> IF >= 
+; ==>
+;   1
+; 
+; note: forced to do <-FIXNUM-INTEGER (cost 10)
+;       unable to do inline fixnum comparison (cost 4) because:
+;       The second argument is a INTEGER, not a FIXNUM.
+
+; in: DEFUN CL-TIMING
+;     (FORMAT T "~&;; **** Coerce to ~s does not eliminate fill pointer ****~%"
+;             'SIMPLE-BASE-STRING)
+; 
+; note: deleting unreachable code
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/timing/cl-timing.fasl
+; compilation finished in 0:00:00.498
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :DOUBLE-METAPHONE-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/double-metaphone.lisp" (written 25 MAY 2026 12:02:07 PM):
+
+; file: /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/double-metaphone.lisp
+; in: DEFUN STRING-AT
+;     (STRING= STRING GBBOPEN-TOOLS::CANDIDATE :START1 GBBOPEN-TOOLS::START :END1
+;              (GBBOPEN-TOOLS:MIN& (LENGTH STRING)
+;                                  (GBBOPEN-TOOLS:+& GBBOPEN-TOOLS::START
+;                                                    (LENGTH
+;                                                     GBBOPEN-TOOLS::CANDIDATE))))
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a SIMPLE-STRING, not a SIMPLE-BASE-STRING.
+;   The second argument is a SIMPLE-STRING, not a SIMPLE-BASE-STRING.
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a SIMPLE-STRING, not a (SIMPLE-ARRAY CHARACTER (*)).
+;   The second argument is a SIMPLE-STRING, not a (SIMPLE-ARRAY CHARACTER (*)).
+
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/double-metaphone.fasl
+; compilation finished in 0:00:00.377
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/test/double-metaphone-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/test/double-metaphone-test.fasl
+; compilation finished in 0:00:00.110
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :OS-INTERFACE-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/test/os-interface-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/test/os-interface-test.fasl
+; compilation finished in 0:00:00.004
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :PORTABLE-SOCKETS-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/portable-sockets.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/portable-sockets.fasl
+; compilation finished in 0:00:00.044
+
+;;; ------------------------------------------------------------------------
+;;;  Portable Sockets Interface 1.0
+;;;
+;;;    Developed and supported by the GBBopen Project (http:/GBBopen.org/)
+;;;    (See http://GBBopen.org/downloads/LICENSE for license details.)
+;;; ------------------------------------------------------------------------
+
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/test/portable-sockets-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/test/portable-sockets-test.fasl
+; compilation finished in 0:00:00.006
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :MULTINODE...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/extensions/multinode.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/extensions/multinode.fasl
+; compilation finished in 0:00:00.002
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :PORTABLE-THREADS-TEST...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/tools/test/portable-threads-test.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/tools/test/portable-threads-test.fasl
+; compilation finished in 0:00:00.039
+
+;;; ------------------------------------------------------------------------
+;;; Compiling :ABORT-KS-EXECUTION-EXAMPLE...
+; compiling file "/Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/control-shells/examples/abort-ks-execution.lisp" (written 13 APR 2020 11:51:03 AM):
+
+; wrote /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/mac-arm64-sbcl-2.6.3/gbbopen/control-shells/examples/abort-ks-execution.fasl
+; compilation finished in 0:00:00.002
+WARNING: redefining GBBOPEN-USER::INITIALIZATIONS in DEFUN
+
+;;; ------------------------------------------------------------------------
+;;; GBBopen modules compilation completed.
+; 
+; compilation unit finished
+;   caught 6 WARNING conditions
+;   caught 4 STYLE-WARNING conditions
+;   printed 23 notes
+
+;;; ✓ compile-gbbopen finished.
+
+
+;;; ===============================================================
+;;; Phase 2: tutorial-example
+;;; ===============================================================
+;;; tutorial-runner: re-loading /Users/kevin/gbbopen-with-bordeaux-threads/gbbopen/source/gbbopen/examples/tutorial.lisp to re-trigger autorun
+;; All link definitions are consistent.
+;; Control shell 1 started
+;; => START-CONTROL-SHELL-EVENT
+;; => CONTROL-SHELL-STARTED-EVENT
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 1
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 1 #<KS COUNT-CENTER-LOCATIONS-KS> 90>
+;;    :CYCLE 1
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 1 #<KS COUNT-CENTER-LOCATIONS-KS> 90>
+;;    :CYCLE 1
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 2 #<KS STARTUP-KS> 100>
+;;    :CYCLE 1
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 2 #<KS STARTUP-KS> 100>
+;;    :CYCLE 1
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 2 #<KS STARTUP-KS> 100>
+;;    :CYCLE 1
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 2 #<KS STARTUP-KS> 100>
+;;    :CYCLE 1
+;; => INITIAL-LOCATION-EVENT
+;;    :INSTANCE #<LOCATION 1 (0 0)>
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 2
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 3 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 2
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 3 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 2
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 4 #<KS PRINT-WALK-KS> 80>
+;;    :CYCLE 2
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 4 #<KS PRINT-WALK-KS> 80>
+;;    :CYCLE 2
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 3 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 2
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 3 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 2
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 3
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 5 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 3
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 5 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 3
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 5 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 3
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 5 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 3
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 4
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 6 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 4
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 6 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 4
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 6 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 4
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 6 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 4
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 5
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 7 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 5
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 7 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 5
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 7 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 5
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 7 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 5
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 6
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 8 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 6
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 8 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 6
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 8 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 6
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 8 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 6
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 7
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 9 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 7
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 9 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 7
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 9 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 7
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 9 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 7
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 8
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 10 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 8
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 10 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 8
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 10 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 8
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 10 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 8
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 9
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 11 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 9
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 11 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 9
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 11 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 9
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 11 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 9
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 10
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 12 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 10
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 12 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 10
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 12 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 10
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 12 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 10
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 11
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 13 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 11
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 13 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 11
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 13 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 11
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 13 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 11
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 12
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 14 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 12
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 14 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 12
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 14 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 12
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 14 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 12
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 13
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 15 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 13
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 15 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 13
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 15 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 13
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 15 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 13
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 14
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 16 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 14
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 16 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 14
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 16 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 14
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 16 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 14
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 15
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 17 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 15
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 17 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 15
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 17 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 15
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 17 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 15
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 16
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 18 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 16
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 18 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 16
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 18 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 16
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 18 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 16
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 17
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 19 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 17
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 19 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 17
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 19 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 17
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 19 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 17
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 18
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 20 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 18
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 20 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 18
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 20 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 18
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 20 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 18
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 19
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 21 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 19
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 21 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 19
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 21 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 19
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 21 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 19
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 20
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 22 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 20
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 22 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 20
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 22 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 20
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 22 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 20
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 21
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 23 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 21
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 23 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 21
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 23 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 21
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 23 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 21
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 22
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 24 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 22
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 24 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 22
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 24 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 22
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 24 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 22
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 23
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 25 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 23
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 25 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 23
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 25 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 23
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 25 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 23
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 24
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 26 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 24
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 26 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 24
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 26 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 24
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 26 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 24
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 25
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 27 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 25
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 27 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 25
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 27 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 25
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 27 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 25
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 26
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 28 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 26
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 28 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 26
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 28 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 26
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 28 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 26
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 27
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 29 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 27
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 29 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 27
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 29 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 27
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 29 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 27
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 28
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 30 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 28
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 30 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 28
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 30 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 28
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 30 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 28
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 29
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 31 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 29
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 31 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 29
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 31 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 29
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 31 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 29
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 30
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 32 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 30
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 32 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 30
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 32 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 30
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 32 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 30
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 31
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 33 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 31
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 33 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 31
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 33 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 31
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 33 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 31
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 32
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 34 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 32
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 34 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 32
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 34 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 32
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 34 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 32
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 33
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 35 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 33
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 35 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 33
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 35 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 33
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 35 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 33
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 34
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 36 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 34
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 36 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 34
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 36 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 34
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 36 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 34
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 35
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 37 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 35
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 37 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 35
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 37 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 35
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 37 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 35
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 36
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 38 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 36
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 38 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 36
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 38 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 36
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 38 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 36
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 37
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 39 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 37
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 39 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 37
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 39 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 37
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 39 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 37
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 38
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 40 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 38
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 40 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 38
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 40 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 38
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 40 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 38
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 39
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 41 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 39
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 41 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 39
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 41 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 39
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 41 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 39
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 40
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 42 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 40
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 42 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 40
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 42 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 40
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 42 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 40
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 41
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 43 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 41
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 43 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 41
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 43 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 41
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 43 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 41
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 42
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 44 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 42
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 44 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 42
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 44 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 42
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 44 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 42
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 43
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 45 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 43
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 45 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 43
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 45 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 43
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 45 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 43
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 44
+;; => KSA-ACTIVATION-EVENT
+;;    :INSTANCE #<KSA 46 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 44
+;; => KSA-ACTIVATED-EVENT
+;;    :INSTANCE #<KSA 46 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 44
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 46 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 44
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 46 #<KS RANDOM-WALK-KS> 100>
+;;    :CYCLE 44
+
+Walked off the world: (-17, 53).
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 45
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 1 #<KS COUNT-CENTER-LOCATIONS-KS> 90>
+;;    :CYCLE 45
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 1 #<KS COUNT-CENTER-LOCATIONS-KS> 90>
+;;    :CYCLE 45
+
+35 locations in the center quadrant. 
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 46
+;; => KSA-EXECUTION-EVENT
+;;    :INSTANCE #<KSA 4 #<KS PRINT-WALK-KS> 80>
+;;    :CYCLE 46
+;; => KSA-EXECUTING-EVENT
+;;    :INSTANCE #<KSA 4 #<KS PRINT-WALK-KS> 80>
+;;    :CYCLE 46
+
+The random path:
+   * 1 (0 0)
+   * 2 (4 2)
+   * 3 (-1 -7)
+   * 4 (0 -14)
+   * 5 (-5 -20)
+   * 6 (1 -23)
+     7 (-5 -32)
+   * 8 (2 -23)
+   * 9 (2 -15)
+  * 10 (5 -8)
+  * 11 (9 -11)
+  * 12 (8 -8)
+  * 13 (9 -10)
+  * 14 (11 -5)
+  * 15 (1 -10)
+  * 16 (3 -7)
+  * 17 (-1 -11)
+  * 18 (-9 -8)
+  * 19 (-5 -4)
+  * 20 (3 6)
+  * 21 (4 14)
+  * 22 (1 6)
+  * 23 (7 12)
+  * 24 (-1 6)
+  * 25 (-7 5)
+  * 26 (-8 -4)
+  * 27 (-11 5)
+  * 28 (-7 -4)
+  * 29 (-9 6)
+  * 30 (-11 2)
+  * 31 (-18 3)
+  * 32 (-16 11)
+  * 33 (-17 15)
+  * 34 (-19 16)
+  * 35 (-19 25)
+  * 36 (-22 23)
+    37 (-16 30)
+    38 (-16 39)
+    39 (-14 36)
+    40 (-8 31)
+    41 (1 37)
+    42 (-8 47)
+    43 (-10 45)
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 47
+;; => QUIESCENCE-EVENT
+;; => CONTROL-SHELL-CYCLE-EVENT
+;;    :CYCLE 48
+;; No executable KSAs remain, exiting control shell
+;; Control shell 1 exited: 48 cycles completed
+;; Run time: 0.01 seconds
+;; Elapsed time: 0 seconds
+:QUIESCENCE
+
+;;; ✓ tutorial-example finished.
+
+
+;;; ===============================================================
+;;; Summary
+;;; ===============================================================
+;;; Overall: PASS
+;;; Exit:    0
