@@ -605,30 +605,26 @@ scope on the calling thread, so symbol-value sees the inner value)."
       (is (eq :inside-let val))
       (is-true bound))))
 
-#+sbcl
-(test symbol-value-in-thread-global-only-not-visible
-  "SBCL contract gap: sb-thread:symbol-value-in-thread inspects the
-binding stack only — it does NOT fall back to the global value when
-the symbol has no per-thread LET binding. A globally-DEFVAR'd-only
-symbol comes back as (values nil nil).
+(test symbol-value-in-thread-falls-back-to-global
+  "A globally-DEFVAR'd-but-not-LET-bound symbol returns its global
+value with bound-p T on both SBCL and ECL.
 
-ECL takes the opposite path (boundp/symbol-value fallback returns the
-global), so this test is SBCL-specific."
-  (multiple-value-bind (val bound)
-      (pt:symbol-value-in-thread '*svit-probe* (pt:current-thread))
-    (is (null val))
-    (is (null bound))))
-
-#+ecl
-(test symbol-value-in-thread-global-visible-on-ecl
-  "ECL backend takes the boundp/symbol-value path, so a
-globally-DEFVAR'd symbol comes back as (values <global> t) — the
-opposite of SBCL's behaviour. Both contracts are documented; this
-test pins ECL's so any future cross-thread API on ECL doesn't
-silently flip the result."
+The earliest v3 shim had a contract gap on SBCL — sb-thread:
+symbol-value-in-thread inspects the binding stack only and returned
+(nil nil) for global-only symbols, the opposite of what GBBopen
+expected. Closed by adding a boundp/symbol-value fallback to the
+SBCL backend; ECL was already taking that path."
   (multiple-value-bind (val bound)
       (pt:symbol-value-in-thread '*svit-probe* (pt:current-thread))
     (is (eq :outer-binding val))
+    (is-true bound)))
+
+(test symbol-value-in-thread-falls-back-to-global-constant
+  "Same fallback for constants. PI is defconstant'd by CL, every
+thread sees the same value; symbol-value-in-thread must return it."
+  (multiple-value-bind (val bound)
+      (pt:symbol-value-in-thread 'pi (pt:current-thread))
+    (is (= pi val))
     (is-true bound)))
 
 (test symbol-value-in-thread-unbound-returns-nil-nil

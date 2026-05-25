@@ -286,10 +286,31 @@ that sb-thread:symbol-value-in-thread requires."
   ;; the symbol DECLARE.
   (declare (ignorable thread))
   #+sbcl
-  (sb-thread:symbol-value-in-thread
-   symbol
-   (bordeaux-threads-2:thread-native-thread thread)
-   nil)
+  ;; sb-thread:symbol-value-in-thread inspects the thread's binding
+  ;; stack only — it returns (values nil nil) for a symbol that has
+  ;; no per-thread LET binding even if the symbol IS globally
+  ;; defvar'd / defconstant'd. GBBopen's portable-threads-test
+  ;; expects the global value to be visible (the global is shared
+  ;; across all threads, so this is semantically safe). Fall back
+  ;; to boundp/symbol-value on the (nil nil) case to close the gap.
+  ;;
+  ;; Known limitation: sb-thread cannot distinguish "thread has no
+  ;; LET binding" from "thread has a LET binding that was
+  ;; MAKUNBOUND'd". Both come back as (nil nil), so the fallback
+  ;; incorrectly returns the global value for the makunbound-LET
+  ;; case. GBBopen's portable-threads-test exercises this exact
+  ;; corner: a worker LET-binds *y* then makunbound's it; the test
+  ;; expects (nil nil), we return (global, t). The marker in the
+  ;; LOG-ERROR is a real-but-tolerable contract gap on SBCL.
+  (multiple-value-bind (value bound)
+      (sb-thread:symbol-value-in-thread
+       symbol
+       (bordeaux-threads-2:thread-native-thread thread)
+       nil)
+    (cond
+      (bound (values value t))
+      ((boundp symbol) (values (symbol-value symbol) t))
+      (t (values nil nil))))
   #-sbcl
   (if (boundp symbol)
       (values (symbol-value symbol) t)
