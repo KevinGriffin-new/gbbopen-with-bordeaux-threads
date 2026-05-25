@@ -131,13 +131,50 @@
   (declare (ignore whostate))
   `(%call-with-recursive-lock-held ,lock (lambda () ,@body)))
 
+(defun %native-release-lock (bt2-lock)
+  "Release BT2-LOCK at the native-mutex level, one recursion step.
+We can't use bt2:release-recursive-lock — it's exported as a symbol
+but signals \"Operation not implemented\" on both SBCL and ECL at
+the time of writing. Dropping to native primitives via
+bt2:lock-native-lock is the workaround. For depth-1 locks this is
+the full release; for deeper nesting only one level is released
+(GBBopen's documented contract for WITHOUT-LOCK-HELD doesn't
+specify deeper-nesting semantics, and the tests exercise depth-1
+only)."
+  #+sbcl (sb-thread:release-mutex (bordeaux-threads-2:lock-native-lock bt2-lock))
+  #+ecl  (mp:giveup-lock          (bordeaux-threads-2:lock-native-lock bt2-lock))
+  #-(or sbcl ecl)
+  (error "without-lock-held: native release not implemented on this Lisp."))
+
+(defun %native-acquire-lock (bt2-lock)
+  "Reacquire BT2-LOCK at the native-mutex level."
+  #+sbcl (sb-thread:grab-mutex (bordeaux-threads-2:lock-native-lock bt2-lock))
+  #+ecl  (mp:get-lock          (bordeaux-threads-2:lock-native-lock bt2-lock))
+  #-(or sbcl ecl)
+  (error "without-lock-held: native acquire not implemented on this Lisp."))
+
+(defun %call-without-lock-held (lock fn)
+  "Release LOCK for the dynamic extent of FN, then reacquire it.
+GBBopen's contract for WITHOUT-LOCK-HELD: the surrounding lock IS
+released so other threads can grab it, and is reacquired (always,
+via unwind-protect) when FN returns or non-locally exits.
+condition-variable inputs unwrap to their embedded lock; recursive
+and plain locks use the same native release/acquire path because
+bt2's recursive-lock equivalents aren't implemented."
+  (let ((actual (if (typep lock 'condition-variable)
+                    (condition-variable-lock lock)
+                    lock)))
+    (%native-release-lock actual)
+    (unwind-protect (funcall fn)
+      (%native-acquire-lock actual))))
+
 (defmacro without-lock-held ((lock &key whostate) &body body)
-  "Run body inside the surrounding lock-held context. This shim treats
-without-lock-held as a no-op (does NOT actually release the lock).
-Safe for code that uses it for yielding semantics; not strictly
-equivalent to a true release/reacquire. Accepts and ignores :whostate."
-  (declare (ignore lock whostate))
-  `(progn ,@body))
+  "Release LOCK for the dynamic extent of body, then reacquire it.
+Dispatches at runtime so recursive locks and condition-variables-as-
+locks unwrap to the right native primitive. The :whostate keyword is
+GBBopen-specific; accept and ignore."
+  (declare (ignore whostate))
+  `(%call-without-lock-held ,lock (lambda () ,@body)))
 
 ;;; ===========================================================================
 ;;; Managed condition variables.

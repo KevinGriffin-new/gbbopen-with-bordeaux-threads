@@ -365,6 +365,54 @@ agrees while we're inside the body."
       (pt:with-lock-held (l)
         (pt:without-lock-held (l :whostate "yielding") :ok)))))
 
+(test without-lock-held-actually-releases-plain-lock
+  "Verify the lock is actually released — thread-holds-lock-p must
+return NIL inside the without-lock-held body. Regression test for
+the v3.0 ship state where without-lock-held was a silent no-op."
+  (let ((l (pt:make-lock :name "wlh-real-release"))
+        (observed-released nil))
+    (pt:with-lock-held (l)
+      (pt:without-lock-held (l)
+        (setf observed-released (not (pt:thread-holds-lock-p l)))))
+    (is-true observed-released
+             "without-lock-held body ran with the lock still held — release is broken")))
+
+(test without-lock-held-actually-releases-recursive-lock
+  "Same regression check for recursive locks. bt2:release-recursive-lock
+is unimplemented at the time of writing, so the shim drops to native
+release-mutex/giveup-lock — verify that path works."
+  (let ((rl (pt:make-recursive-lock :name "wlh-real-release-rl"))
+        (observed-released nil))
+    (pt:with-lock-held (rl)
+      (pt:without-lock-held (rl)
+        (setf observed-released (not (pt:thread-holds-lock-p rl)))))
+    (is-true observed-released
+             "without-lock-held body on recursive lock ran with the lock still held")))
+
+(test without-lock-held-reacquires-on-normal-exit
+  "After the without-lock-held body returns, the lock must be held
+again by the calling thread."
+  (let ((l (pt:make-lock :name "wlh-reacquire")))
+    (pt:with-lock-held (l)
+      (pt:without-lock-held (l) :ok)
+      (is-true (pt:thread-holds-lock-p l)
+               "lock was not reacquired after without-lock-held body returned"))))
+
+(test without-lock-held-reacquires-on-non-local-exit
+  "Even when the body non-locally exits (via throw/return), the lock
+must be reacquired (unwind-protect contract)."
+  (let ((l (pt:make-lock :name "wlh-unwind")))
+    (catch 'escape
+      (pt:with-lock-held (l)
+        (pt:without-lock-held (l)
+          (throw 'escape :gone))))
+    ;; After the catch, the with-lock-held body's exit also released
+    ;; the lock — what we're testing is that the unwind-protect inside
+    ;; without-lock-held re-acquired before with-lock-held released.
+    ;; Easier: re-acquire and confirm no error (would error if we'd
+    ;; left the lock in a bad state, e.g., owned-by-no-one-but-locked).
+    (finishes (pt:with-lock-held (l) :ok))))
+
 ;;; ---------------------------------------------------------------------
 ;;; 5. Managed condition variables
 
