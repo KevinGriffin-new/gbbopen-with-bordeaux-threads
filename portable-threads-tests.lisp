@@ -777,6 +777,32 @@ out of with-timeout (the shim only handles bt2:timeout)."
     (pt:with-timeout (5.0 :timed-out)
       (error "boom"))))
 
+(test with-timeout-nested-outer-fires-first
+  "Outer 0.1s timeout fires before inner 2s timeout (body sleeps 1s);
+outer's timeout-body must run, inner's must NOT see the signal.
+Regression test for the naive-handler-case bug where the inner
+catch consumed the outer's bt2:timeout."
+  (with-test-deadline (5.0 "nested with-timeout did not return")
+    (let ((values (multiple-value-list
+                   (pt:with-timeout (0.1 (values 3 4))
+                     (pt:with-timeout (2.0 (values 5 6))
+                       (sleep 1.0)
+                       (values 1 2))))))
+      (is (equal '(3 4) values)
+          "nested-outer-fires-first: expected (3 4), got ~s" values))))
+
+(test with-timeout-nested-inner-fires-first
+  "Inner 0.1s timeout fires before outer 2s timeout (body sleeps 1s);
+inner's timeout-body must run, outer should NOT fire afterward."
+  (with-test-deadline (5.0 "nested with-timeout did not return")
+    (let ((values (multiple-value-list
+                   (pt:with-timeout (2.0 (values 3 4))
+                     (pt:with-timeout (0.1 (values 5 6))
+                       (sleep 1.0)
+                       (values 1 2))))))
+      (is (equal '(5 6) values)
+          "nested-inner-fires-first: expected (5 6), got ~s" values))))
+
 ;;; ---------------------------------------------------------------------
 ;;; 12. Atomic operations
 

@@ -420,12 +420,43 @@ objects, so dive bt2:thread-native-thread on both."
 
 (defmacro with-timeout ((seconds &body timeout-body) &body body)
   "Execute body with a timeout; on timeout, execute timeout-body.
-bt2:with-timeout signals bt2:timeout (= sb-ext:timeout on SBCL) on
-overrun; we wrap that into the GBBopen API shape where a separate
-timeout-body branch runs."
-  `(handler-case
-       (bordeaux-threads-2:with-timeout (,seconds) ,@body)
-     (bordeaux-threads-2:timeout () ,@timeout-body)))
+
+bt2:with-timeout signals bt2:timeout (= sb-ext:timeout on SBCL)
+on overrun. The naive wrapper — handler-case catching bt2:timeout
+unconditionally — is *wrong* for nested with-timeouts because the
+condition class doesn't identify which with-timeout scope fired
+the signal. In the nested case
+
+    (with-timeout (0.1 (values 3 4))      ; outer
+      (with-timeout (2 (values 5 6))      ; inner
+        (sleep 1)
+        (values 1 2)))
+
+the outer timeout fires first (0.1 < 1), but a naive inner
+handler-case sees the bt2:timeout, says \"that's mine,\" and
+returns (values 5 6) — when the test expects (values 3 4) from
+the outer's timeout-body. GBBopen's portable-threads-test catches
+this.
+
+Correct semantics: a with-timeout's timeout-body fires only when
+ITS OWN deadline has passed; otherwise the signal propagates up
+to the surrounding scope. Implementation: record this invocation's
+deadline at entry, install a handler-bind that checks the
+deadline before claiming the signal. Handlers that DON'T transfer
+control let the signal continue searching the handler stack, so
+inner-not-mine cases reach the outer handler naturally."
+  (let ((deadline (gensym "DEADLINE-"))
+        (block-name (gensym "WITH-TIMEOUT-BLOCK-")))
+    `(let ((,deadline (+ (get-internal-real-time)
+                         (round (* ,seconds internal-time-units-per-second)))))
+       (block ,block-name
+         (handler-bind
+             ((bordeaux-threads-2:timeout
+                (lambda (c)
+                  (declare (ignore c))
+                  (when (>= (get-internal-real-time) ,deadline)
+                    (return-from ,block-name (progn ,@timeout-body))))))
+           (bordeaux-threads-2:with-timeout (,seconds) ,@body))))))
 
 ;;; ===========================================================================
 ;;; Atomic operations
