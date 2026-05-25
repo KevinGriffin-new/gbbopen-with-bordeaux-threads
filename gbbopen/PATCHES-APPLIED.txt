@@ -1,0 +1,41 @@
+Provenance of this vendored GBBopen tree
+========================================
+
+Upstream:
+  https://github.com/lisp-mirror/GBBopen
+  base commit: 5518cb4de76714e4d5bc69f49cc5333d5a0249a7
+               ("add .gitattributes" — last pre-PR-A upstream commit)
+  vendored as: commit face82c on this branch
+
+Patches applied on top of the upstream base, in order (eight commits
+addressing SBCL-specific breakage that accumulated as SBCL evolved
+between GBBopen's last upstream release in 2013 and SBCL 2.6.3 on
+macOS ARM64):
+
+  1. 867b1f6  Drop vestigial sb-impl:ENTER-NEW-NICKNAMES call in
+              module-manager.lisp
+  2. 3b05623  Remove sb-int:short-float-p import; add SBCL to typep
+              fallback
+  3. 28d60e1  Drop vestigial sb-impl::output-float-infinity
+              redefinition
+  4. 8329ee1  Rewrite SBCL resize-hash-table using sentinel-insert +
+              remhash
+  5. 5b12e3b  Drop vestigial sb-pcl::preinform-compiler-about-class-type
+              call
+  6. aa5a036  Relax SIMPLE-BASE-STRING declarations to SIMPLE-STRING
+              in double-metaphone
+  7. 5e6bd28  Pass :search t to run-program in run-external-program
+              for SBCL/CMU/Clozure/SCL
+  8. 8a0897d  Add SBCL ARM64 platform detection to
+              *compiled-directory-name*
+
+Plus one full-file replacement (not a patch):
+
+  source/tools/portable-threads.lisp
+    Replaced with the bordeaux-threads-2 shim (v3.0). Identifies
+    itself at runtime as "shim-3.0 (bordeaux-threads-2)". See the
+    top-of-file banner in that file for the v3-vs-v2-vs-upstream
+    rationale.
+
+Build artifacts and per-implementation .fas/.fasl directories are
+.gitignored at the repository root.
