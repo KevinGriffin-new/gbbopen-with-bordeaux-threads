@@ -39,3 +39,11 @@ gbbopen/**/*.data
 
 # Local artifact dumps from the runner scripts.
 artifacts/*.log
+
+# Captured GBBopen-module-test output is per-machine (compile paths,
+# wall-clock timings, ps process listings from os-interface-test that
+# can leak the developer's local-network setup, etc.) and is treated
+# as a locally-regenerable diagnostic, not committed documentation.
+# The runner scripts continue to write to artifacts/ for local
+# inspection; CI / publish flows should regenerate fresh.
+artifacts/gbbopen-tests-*.txt
