@@ -1,0 +1,41 @@
+.DS_Store
+
+# Per-implementation compiled-directory-name outputs under gbbopen/.
+# Pattern matches sbcl/ecl/clozure/abcl/cmucl/lispworks per
+# *compiled-directory-name* in module-manager-loader.lisp.
+gbbopen/**/*-sbcl-*/
+gbbopen/**/*-ecl-*/
+gbbopen/**/*-cmucl-*/
+gbbopen/**/*-clozure-*/
+gbbopen/**/*-lispworks-*/
+gbbopen/**/*-abcl-*/
+gbbopen/**/*-allegro-*/
+
+# Lisp build artifacts anywhere in the tree.
+*.fasl
+*.fas
+*.lib
+*.dx32fsl
+*.dx64fsl
+*.dfsl
+*.lx32fsl
+*.lx64fsl
+*.fasl4
+*.x86f
+*.sparcf
+*.eclh
+*.abcl
+
+# ECL compile-through-C intermediates.
+gbbopen/**/*.c
+gbbopen/**/*.o
+gbbopen/**/*.data
+
+# Editor / backup detritus.
+*~
+*.bak.*
+.\#*
+\#*\#
+
+# Local artifact dumps from the runner scripts.
+artifacts/*.log
