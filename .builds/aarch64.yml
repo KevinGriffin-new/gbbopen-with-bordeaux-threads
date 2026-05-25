@@ -1,27 +1,21 @@
-# sr.ht continuous-integration build for gbbopen-with-bordeaux-threads.
+# sr.ht continuous-integration build for gbbopen-with-bordeaux-threads
+# — aarch64 (ARM64) variant.
 #
-# Runs on every push. Installs SBCL + ECL + Quicklisp + Ultralisp
-# (the bt2 API lives in master snapshots that Ultralisp tracks; stock
-# Quicklisp's bordeaux-threads is the older 0.9.x line, which doesn't
-# expose the :bordeaux-threads-2 package the shim requires). Then:
+# Sibling: .builds/amd64.yml runs the same flow under x86_64. sr.ht
+# kicks off every file in .builds/ as a separate parallel build on
+# every push.
 #
-#   1. Symlinks the cloned repo into ~/quicklisp/local-projects/ so
-#      the shim system is quickloadable.
-#   2. Smoke-tests (ql:quickload :gbbopen-with-bordeaux-threads)
-#      under SBCL to prove the .asd wiring works end-to-end.
-#   3. Runs the shim's FiveAM suite under every Lisp on PATH
-#      (currently SBCL + ECL) via run-tests.sh.
-#   4. Runs the GBBopen tutorial under SBCL (run-tutorial.sh
-#      defaults to SBCL-only because GBBopen-on-ECL is a separate
-#      unverified work item).
+# Why ARM64 specifically: the development machine is macOS ARM64, and
+# the PR-A patch series already had an ARM64-specific patch (commit
+# 8a0897d, "Add SBCL ARM64 platform detection to
+# *compiled-directory-name*"). Linux aarch64 is the same architecture
+# as Raspberry Pi 4/5 (BCM2711 / BCM2712, armv8-A), so a green build
+# here also gives Pi-deployment confidence.
 #
-# Uploads the fresh tutorial-output artifact so build history at
-# builds.sr.ht keeps a per-build copy for inspection. The committed
-# artifacts/tutorial-output-sbcl.txt in git is the hand-curated
-# canonical reference; the CI-uploaded one is a transient build
-# artifact.
+# Tasks and content otherwise identical to amd64.yml.
 
-image: archlinux
+image: alpine/edge
+arch: aarch64
 packages:
   - sbcl
   - ecl
