@@ -1,0 +1,69 @@
+# sr.ht continuous-integration build for gbbopen-with-bordeaux-threads.
+#
+# Runs on every push. Installs SBCL + ECL + Quicklisp + Ultralisp
+# (the bt2 API lives in master snapshots that Ultralisp tracks; stock
+# Quicklisp's bordeaux-threads is the older 0.9.x line, which doesn't
+# expose the :bordeaux-threads-2 package the shim requires). Then:
+#
+#   1. Symlinks the cloned repo into ~/quicklisp/local-projects/ so
+#      the shim system is quickloadable.
+#   2. Smoke-tests (ql:quickload :gbbopen-with-bordeaux-threads)
+#      under SBCL to prove the .asd wiring works end-to-end.
+#   3. Runs the shim's FiveAM suite under every Lisp on PATH
+#      (currently SBCL + ECL) via run-tests.sh.
+#   4. Runs the GBBopen tutorial under SBCL (run-tutorial.sh
+#      defaults to SBCL-only because GBBopen-on-ECL is a separate
+#      unverified work item).
+#
+# Uploads the fresh tutorial-output artifact so build history at
+# builds.sr.ht keeps a per-build copy for inspection. The committed
+# artifacts/tutorial-output-sbcl.txt in git is the hand-curated
+# canonical reference; the CI-uploaded one is a transient build
+# artifact.
+
+image: archlinux
+packages:
+  - sbcl
+  - ecl
+  - curl
+sources:
+  - https://git.sr.ht/~kevin_griffin/gbbopen-with-bordeaux-threads
+environment:
+  QUICKLISP_SETUP: /home/build/quicklisp/setup.lisp
+tasks:
+  - install_quicklisp: |
+      curl -fsSL -o /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+      sbcl --non-interactive --no-userinit --no-sysinit \
+           --load /tmp/quicklisp.lisp \
+           --eval '(quicklisp-quickstart:install)' \
+           --eval '(ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)' \
+           --eval '(ql:quickload :bordeaux-threads :silent t)' \
+           --eval "(format t \"~&;;; bordeaux-threads version: ~a~%\" (asdf:component-version (asdf:find-system :bordeaux-threads)))" \
+           --eval "(format t \"~&;;; :bordeaux-threads-2 present: ~a~%\" (and (find-package :bordeaux-threads-2) t))"
+
+  - setup_local_projects: |
+      ln -sf "$HOME/gbbopen-with-bordeaux-threads" \
+             "$HOME/quicklisp/local-projects/gbbopen-with-bordeaux-threads"
+      sbcl --non-interactive --no-userinit --no-sysinit \
+           --eval "(load \"$QUICKLISP_SETUP\")" \
+           --eval '(ql:register-local-projects)'
+
+  - smoke_quickload: |
+      cd "$HOME/gbbopen-with-bordeaux-threads"
+      sbcl --non-interactive --no-userinit --no-sysinit \
+           --eval "(load \"$QUICKLISP_SETUP\")" \
+           --eval '(ql:quickload :gbbopen-with-bordeaux-threads :silent t)' \
+           --eval "(format t \"~&;;; (find-package :gbbopen) = ~a~%\" (and (find-package :gbbopen) t))" \
+           --eval "(format t \"~&;;; (find-package :portable-threads) = ~a~%\" (and (find-package :portable-threads) t))" \
+           --eval "(format t \"~&;;; shim version = ~a~%\" (symbol-value (find-symbol \"PORTABLE-THREADS-IMPLEMENTATION-VERSION\" :portable-threads)))"
+
+  - shim_tests: |
+      cd "$HOME/gbbopen-with-bordeaux-threads"
+      ./run-tests.sh
+
+  - tutorial: |
+      cd "$HOME/gbbopen-with-bordeaux-threads"
+      ./run-tutorial.sh
+
+artifacts:
+  - gbbopen-with-bordeaux-threads/artifacts/tutorial-output-sbcl.txt
