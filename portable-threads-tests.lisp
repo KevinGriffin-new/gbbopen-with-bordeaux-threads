@@ -299,6 +299,98 @@ silently at load time."
   (is (search "bordeaux-threads-2" pt:portable-threads-implementation-version)))
 
 ;;; ---------------------------------------------------------------------
+;;; 1b. lisp-conditional coverage
+;;;
+;;; The shim is intentionally impl-conditional in several places —
+;;; thread-holds-lock-p, %native-release-lock / %native-acquire-lock,
+;;; symbol-value-in-thread, the make-hash-table :weakness keyword,
+;;; etc. Today's CCL surprises (2026-05-26) came from #+sbcl and
+;;; #+ecl branches that lacked a corresponding #+ccl branch: the
+;;; fallback was a no-op, an error, or a degraded result. SBCL+ECL
+;;; CI couldn't see the gap because the source compiled cleanly
+;;; without a CCL branch.
+;;;
+;;; This test scans the shim source for every impl feature mentioned
+;;; in a `#+` / `#-` reader-conditional and asserts the list is a
+;;; subset of the impls we explicitly support. If a new impl feature
+;;; appears in source without being on the supported list, this fails
+;;; and tells the contributor to either add the impl to the list or
+;;; remove the unintended branch. Doesn't catch asymmetric coverage
+;;; (a `#+sbcl` somewhere with no `#+ccl` counterpart) — that level
+;;; of analysis requires per-function symmetry rules, which are too
+;;; brittle to maintain. The looser invariant (no surprise impl
+;;; names) catches the class of issues we observed.
+
+(defparameter +shim-supported-impls+
+  '(:sbcl :ccl :clozure :ecl :allegro :clisp :cmu :scl :digitool-mcl
+    :lispworks :cormanlisp :openmcl)
+  "Impl feature keywords that may legitimately appear in
+gbbopen/source/tools/portable-threads.lisp. Adding an impl here is
+shorthand for 'we've thought about whether this impl needs a branch.'
+Removing one is shorthand for 'we no longer claim support.'")
+
+(defvar *tests-file-path*
+  (or *load-pathname* *compile-file-pathname*)
+  "Path to this very test file, captured at load/compile time. Used
+to derive the shim source path without depending on ASDF system
+registration (run-tests.sh loads the shim directly, not via ASDF).")
+
+(defun shim-source-path ()
+  (merge-pathnames "gbbopen/source/tools/portable-threads.lisp"
+                   *tests-file-path*))
+
+(defun extract-reader-conditional-impls (text)
+  "Return the deduped set of impl keywords mentioned in #+ / #-
+reader conditionals in TEXT. Reads the form after each directive
+with READ-FROM-STRING and walks the result: a bare symbol yields
+itself, a (and ...) / (or ...) / (not ...) composite yields the
+union of its leaves. Skips KEYWORDP only at the leaf level so a
+malformed directive doesn't poison the whole result."
+  (let ((acc nil)
+        (separators '(#\Space #\Tab #\Newline #\Return)))
+    (labels ((collect (form)
+               (cond
+                 ((null form))
+                 ((and (symbolp form) (not (member form '(and or not))))
+                  (pushnew (intern (symbol-name form) :keyword) acc))
+                 ((consp form)
+                  (mapc #'collect (cdr form))))))
+      (loop with start = 0
+            for sharp = (let ((p (search "#+" text :start2 start))
+                              (m (search "#-" text :start2 start)))
+                          (cond ((and p m) (min p m))
+                                (t (or p m))))
+            while sharp
+            do (let ((after (+ sharp 2)))
+                 ;; Skip whitespace between the directive and the form.
+                 (loop while (and (< after (length text))
+                                  (member (char text after) separators))
+                       do (incf after))
+                 (multiple-value-bind (form pos)
+                     (handler-case
+                         (read-from-string text nil nil :start after)
+                       (error () (values nil (1+ after))))
+                   (collect form)
+                   (setf start pos)))
+            finally (return acc)))))
+
+(test shim-reader-conditionals-stay-on-allowlist
+  "Coverage gate: every impl named in a #+ / #- form in the shim must
+appear in +shim-supported-impls+. Adding a new impl branch without
+adding the impl here is the most common way to introduce a 'silent
+gap' — a fallback that compiles cleanly on un-listed impls but
+behaves wrong at runtime."
+  (let* ((source (uiop:read-file-string (shim-source-path)))
+         (mentioned (extract-reader-conditional-impls source))
+         (unknown (remove-if (lambda (impl) (member impl +shim-supported-impls+))
+                             mentioned)))
+    (is (null unknown)
+        "shim source mentions reader-conditional impl(s) not in ~
+         +shim-supported-impls+: ~a — add them to the list (if ~
+         intentional) or remove the branch."
+        unknown)))
+
+;;; ---------------------------------------------------------------------
 ;;; 2. Direct bt2 re-exports
 
 (test current-thread-returns-thread

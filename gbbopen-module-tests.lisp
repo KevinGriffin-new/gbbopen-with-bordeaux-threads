@@ -265,6 +265,57 @@ directly).")
   :description "CL implementation timing benchmark.")
 
 ;;; -----------------------------------------------------------------------
+;;; Regression tests (not module-based; raw FiveAM)
+;;;
+;;; These exercise specific code paths that surfaced as impl-specific
+;;; gaps during cross-impl validation. They isolate one path each so
+;;; a future regression points directly at the gap, not at a
+;;; downstream-victim module test.
+
+(test class-redefinition-survives-reset
+  "Regression (2026-05-26, CCL): a KS unit-class redefinition leaves
+the prior class prototype obsolete. CCL's UPDATE-OBSOLETE-INSTANCE
+transparently re-runs SHARED-INITIALIZE :AROUND the next time
+anything touches the prototype. The :around method on (ks ks) in
+agenda-shell.lisp calls ADD-KS-TRIGGERS, which without a slot-boundp
+guard reads (trigger-events-of ks) — unbound on the just-obsoleted
+prototype — and signals UNBOUND-SLOT.
+
+That error aborts the reset mid-iteration, leaving the unit-class
+hash tables and the agenda-shell event-function registry in
+inconsistent state. Downstream symptom was TUTORIAL-EXAMPLE failing
+with 'Space instance (GBBOPEN-USER::SPACE-1) does not exist' because
+QUIESCENCE-EVENT-KS from agenda-shell-test had leaked through.
+
+The reproducer below isolates the path: define a KS subclass, force
+its prototype to be allocated, redefine the class to make the
+prototype obsolete, then call RESET-GBBOPEN — which iterates classes
+and accesses (class-prototype ...) via INITIAL-CLASS-INSTANCE-NUMBER,
+firing the update-obsolete-instance path. Should run cleanly on
+every supported impl as long as ADD-KS-TRIGGERS guards its slot
+reads with SLOT-BOUNDP."
+  (let ((ks-sym (find-symbol "KS" :agenda-shell)))
+    (is-true ks-sym
+             "agenda-shell:ks must be available — has compile-gbbopen run?")
+    (when ks-sym
+      (let ((spec `(redefn-stress-ks (,ks-sym) ())))
+        (eval `(gbbopen:define-unit-class ,@spec))
+        ;; Force prototype allocation so the redefinition has something
+        ;; to mark obsolete. SBCL requires explicit finalization before
+        ;; class-prototype; CCL/ECL finalize implicitly. We call both
+        ;; via gbbopen-tools' MOP re-exports — that package is loaded
+        ;; by the time this test runs because compile-gbbopen needed it.
+        (let ((cls (find-class 'redefn-stress-ks)))
+          (funcall (find-symbol "FINALIZE-INHERITANCE" :gbbopen-tools) cls)
+          (funcall (find-symbol "CLASS-PROTOTYPE" :gbbopen-tools) cls))
+        ;; Redefine — the prior prototype is now obsolete.
+        (eval `(gbbopen:define-unit-class ,@spec))
+        ;; Without the fix, this signals UNBOUND-SLOT and aborts
+        ;; reset-gbbopen mid-iteration. With the fix, completes
+        ;; cleanly.
+        (finishes (gbbopen:reset-gbbopen))))))
+
+;;; -----------------------------------------------------------------------
 ;;; Entry point for batch invocation
 
 (defun run-suite ()
