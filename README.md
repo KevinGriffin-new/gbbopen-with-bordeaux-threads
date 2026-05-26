@@ -9,9 +9,11 @@ framework for Common Lisp — vendored at upstream commit `5518cb4d` of
   [bordeaux-threads-2](https://sionescu.github.io/bordeaux-threads/).
 - Eight SBCL-specific compile-error fixes accumulated since GBBopen's
   last upstream release in 2013 (SBCL 2.6.3 / macOS ARM64 baseline).
-- A FiveAM test suite covering the shim's public contract (191
-  assertions on SBCL, 182 on ECL) and a wrapper layer around GBBopen's
-  own ten test/example modules.
+- A FiveAM test suite covering the shim's public contract (196
+  assertions on SBCL, 187 on CCL, 182 on ECL — the per-impl
+  differences are `#+sbcl`-gated memleak tests that probe SBCL's
+  exact GC contract) and a wrapper layer around GBBopen's own ten
+  test/example modules.
 
 Apache 2.0. See `gbbopen/PATCHES-APPLIED.txt` for the patch series
 provenance and `gbbopen/source/tools/portable-threads.lisp` for the
@@ -19,20 +21,27 @@ shim's design notes.
 
 ## Prerequisites
 
-- **SBCL** or **ECL**. Verified-green platforms:
+- **SBCL**, **CCL**, or **ECL**. Verified-green platforms:
 
   | Platform | Lisp(s) | How |
   |---|---|---|
   | macOS ARM64 (Darwin / aarch64) | SBCL 2.6.3, ECL 26.5.5 | local development |
-  | Linux x86_64 (Arch / glibc) | SBCL 2.6.4, ECL 26.5.5 | sr.ht CI (`.builds/amd64.yml`) |
+  | macOS x86_64 (Darwin / Big Sur) | SBCL 2.5.2 (MacPorts), CCL 1.12.2 / 1.13 | local validation on the old-Mac dev box |
+  | Linux x86_64 (Arch / glibc) | SBCL 2.6.4, CCL 1.13, ECL 26.5.5 | sr.ht CI (`.builds/amd64.yml`) |
   | Linux aarch64 (Ubuntu 24.04 / glibc) | SBCL + ECL as packaged in noble | GitHub Actions CI (`.github/workflows/aarch64.yml`) |
 
-  Other Unix-y platforms with a recent SBCL or ECL should work in
-  principle but aren't on the CI grid; treat as best-effort. macOS
-  x86_64 and Windows are entirely untested. The shim test suite runs
-  on both Lisp implementations on every CI build; the GBBopen module
-  suite and tutorial runner default to SBCL because GBBopen-on-ECL
-  is a separate, currently-unverified work item.
+  CCL coverage lives on the amd64 row only because Clozure 1.13
+  publishes no aarch64-Linux release tarball (verified against
+  github.com/Clozure/ccl/releases/tag/v1.13). Promote to the
+  aarch64 row when one appears.
+
+  Other Unix-y platforms with a recent SBCL/CCL/ECL should work in
+  principle but aren't on the CI grid; treat as best-effort.
+  Windows is entirely untested. The shim test suite runs under
+  every Lisp on the platform on every CI build; the GBBopen module
+  suite runs SBCL + CCL on amd64 and SBCL on aarch64; the tutorial
+  runner defaults to SBCL because GBBopen-on-ECL is a separate,
+  currently-unverified work item.
 
 - **Quicklisp** at the standard `~/quicklisp/` location. Override with
   the `QUICKLISP_SETUP` environment variable if elsewhere.
@@ -231,7 +240,7 @@ gbbopen-with-bordeaux-threads/
 
 | Area | Upstream | This repo |
 |---|---|---|
-| `source/tools/portable-threads.lisp` | 2,423-line per-impl file with blocks for ABCL/Allegro/CLISP/Clozure/CMUCL/ECL/GCL/LispWorks/Digitool-MCL/SBCL/SCL | ~450-line bordeaux-threads-2 shim (SBCL + ECL paths, v3.0) |
+| `source/tools/portable-threads.lisp` | 2,423-line per-impl file with blocks for ABCL/Allegro/CLISP/Clozure/CMUCL/ECL/GCL/LispWorks/Digitool-MCL/SBCL/SCL | ~470-line bordeaux-threads-2 shim (SBCL + CCL + ECL paths, v3.0) |
 | SBCL 2.6.3 / ARM64 build | Compile errors in 8 places (see `gbbopen/PATCHES-APPLIED.txt`) | All 8 fixed as separate commits |
 | Hibernation thread state | `*hibernation-locks*` and `*hibernation-cvs*` leaked one entry per thread that ever called `hibernate-thread` (no cleanup, no weakness) | Weak-key hash tables + `unwind-protect remhash` (eager normal-path cleanup + GC-driven kill-thread safety net) |
 | ASDF loadability | `(asdf:load-system :gbbopen)` no-op (placeholder system) | `(ql:quickload :gbbopen-with-bordeaux-threads)` does the right dance |
