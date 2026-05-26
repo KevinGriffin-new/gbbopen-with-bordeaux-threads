@@ -99,15 +99,14 @@ tasks:
       mkdir -p "$HOME/.ssh"
       ssh-keyscan -t ed25519,rsa github.com 2>/dev/null >> "$HOME/.ssh/known_hosts"
 
-      # Find the SSH key that sr.ht installed. The secret might have
-      # been registered with a non-canonical filename (anything other
-      # than id_rsa / id_ed25519 / id_dsa / id_ecdsa), in which case
-      # ssh would not try it by default. List ~/.ssh/, pick the first
-      # plausible private-key file, point GIT_SSH_COMMAND at it
-      # explicitly. The listing also appears in the build log, so if
-      # nothing matches we can see what's actually there.
-      echo "--- contents of ~/.ssh/: ---"
+      # Find the SSH key that sr.ht installed. Diagnostic-heavy because
+      # the secret-install path has surprised us once already — list
+      # ~/.ssh/, then broaden the search across the build environment
+      # if nothing was found there. Output goes to the build log.
+      echo "--- ~/.ssh/ contents: ---"
       ls -la "$HOME/.ssh/" || true
+      echo "--- secret-related env vars: ---"
+      env | grep -iE 'secret|ssh|key' | grep -v '^_' || true
       key_file=$(find "$HOME/.ssh/" -maxdepth 1 -type f \
                       ! -name 'known_hosts' \
                       ! -name 'authorized_keys' \
@@ -115,7 +114,16 @@ tasks:
                       ! -name '*.pub' \
                       | head -1)
       if [ -z "$key_file" ]; then
-        echo "ERROR: no private key file found in ~/.ssh/ — was the sr.ht secret installed?"
+        echo "--- nothing in ~/.ssh/; broader filesystem search: ---"
+        # Look anywhere a key-shaped file might have landed.
+        find "$HOME" /etc/secrets /root/.ssh /tmp -maxdepth 3 -type f \
+             \( -name 'id_*' -o -name '*.pem' -o -name '*key*' \) \
+             2>/dev/null | grep -v '\.pub$' | head -20 || true
+        echo "--- (end of search) ---"
+        echo "ERROR: no private key file found — verify the sr.ht secret"
+        echo "       46f739e5-4538-45dd-a79f-bf173b7a2ed9 is (a) of type"
+        echo "       'SSH key', (b) owned by ~kevin_griffin, and (c) not"
+        echo "       restricted from this repo."
         exit 1
       fi
       echo "Using SSH identity: $key_file"
