@@ -19,13 +19,37 @@ shim's design notes.
 
 ## Prerequisites
 
-- **SBCL** (tested on 2.6.3 macOS ARM64) or **ECL** (tested on 26.5.5
-  macOS ARM64). The shim test suite runs on both; the GBBopen module
-  suite and tutorial runner default to SBCL because GBBopen-on-ECL is
-  a separate, currently-unverified work item.
+- **SBCL** or **ECL**. Verified-green platforms:
+
+  | Platform | Lisp(s) | How |
+  |---|---|---|
+  | macOS ARM64 (Darwin / aarch64) | SBCL 2.6.3, ECL 26.5.5 | local development |
+  | Linux x86_64 (Arch / glibc) | SBCL 2.6.4, ECL 26.5.5 | sr.ht CI (`.builds/amd64.yml`) |
+  | Linux aarch64 (Ubuntu 24.04 / glibc) | SBCL + ECL as packaged in noble | GitHub Actions CI (`.github/workflows/aarch64.yml`) |
+
+  Other Unix-y platforms with a recent SBCL or ECL should work in
+  principle but aren't on the CI grid; treat as best-effort. macOS
+  x86_64 and Windows are entirely untested. The shim test suite runs
+  on both Lisp implementations on every CI build; the GBBopen module
+  suite and tutorial runner default to SBCL because GBBopen-on-ECL
+  is a separate, currently-unverified work item.
+
 - **Quicklisp** at the standard `~/quicklisp/` location. Override with
   the `QUICKLISP_SETUP` environment variable if elsewhere.
-- **bordeaux-threads** (resolved automatically via Quicklisp).
+
+- **The Ultralisp dist** for `bordeaux-threads`. Stock Quicklisp ships
+  bordeaux-threads 0.9.x, which doesn't expose the `:bordeaux-threads-2`
+  package the shim requires. Ultralisp tracks the master snapshot that
+  does. After installing Quicklisp:
+
+  ```lisp
+  (ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)
+  (ql:quickload :bordeaux-threads)
+  ;; verify (find-package :bordeaux-threads-2) returns T
+  ```
+
+- **bordeaux-threads** (resolved automatically via Quicklisp + Ultralisp
+  per above).
 - **FiveAM** for running the test suites (resolved automatically).
 
 ## Quick start
