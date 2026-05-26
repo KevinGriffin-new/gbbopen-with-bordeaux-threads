@@ -142,25 +142,98 @@ proxy. Kill the thread and return NIL on timeout."
 (defmacro with-test-deadline ((seconds description) &body body)
   "Wrap BODY in a real-time guard. Fails the test (via FAIL) if BODY
 hasn't finished within SECONDS. Implemented with a watchdog thread that
-interrupts the test thread, so it works for arbitrary blocking code."
-  (let ((tag (gensym "DEADLINE-")))
+interrupts the test thread, so it works for arbitrary blocking code.
+
+The watchdog kill in the cleanup branch is best-effort and racy — on
+CCL, kill-thread on a sleeping watchdog can lose to the watchdog
+finishing its sleep and queuing an interrupt. That interrupt is then
+delivered to the test thread AFTER it has exited the `block ,tag`,
+producing CANT-THROW-ERROR (and incorrectly blaming a later test in
+the suite for an earlier test's deadline). To make the race benign,
+the interrupt closure first checks BODY-DONE: if set, the test body
+finished and the throw target may no longer be in scope, so just
+return silently. BODY-DONE is captured lexically, so the closure
+sees the final state regardless of when the interrupt fires."
+  (let ((tag (gensym "DEADLINE-"))
+        (body-done (gensym "BODY-DONE-")))
     `(block ,tag
        (let* ((test-thread (bt2:current-thread))
-              (fired nil)
+              (,body-done nil)
               (watchdog
                 (bt2:make-thread
                  (lambda ()
                    (sleep ,seconds)
-                   (setf fired t)
                    (handler-case
                        (bt2:interrupt-thread
                         test-thread
-                        (lambda () (return-from ,tag (fail ,description))))
+                        (lambda ()
+                          (unless ,body-done
+                            (return-from ,tag (fail ,description)))))
                      (error () nil)))
                  :name (format nil "watchdog ~a" ,description))))
          (unwind-protect (progn ,@body)
-           (unless fired
-             (handler-case (pt:kill-thread watchdog) (error () nil))))))))
+           (setf ,body-done t)
+           (handler-case (pt:kill-thread watchdog) (error () nil)))))))
+
+;;; ---------------------------------------------------------------------
+;;; 0. Self-tests for the test harness itself
+;;;
+;;; with-test-deadline has a watchdog race that on CCL surfaced as
+;;; CANT-THROW-ERROR: body completes, the unwind-protect kills the
+;;; watchdog, but the kill loses to the watchdog finishing its sleep
+;;; and queueing an interrupt against the test thread. The interrupt
+;;; arrives after the block ,tag has unwound, return-from has no
+;;; target, CCL signals CANT-THROW-ERROR (SBCL silently swallows it).
+;;; The body-done flag fixed this. These tests guard the fix.
+
+(test with-test-deadline-passes-when-body-quick
+  "Body well under the deadline returns its value, no watchdog fire."
+  (is (= 42 (with-test-deadline (2.0 "quick")
+              42))))
+
+;; FLET-shadowing FIVEAM:FAIL below trips SBCL's compile-time package
+;; lock on :IT.BESE.FIVEAM. The shadow is the cleanest way to record
+;; that the watchdog fired without letting the inner fail propagate
+;; to the outer FiveAM run. Scope the lock-disable narrowly to this
+;; one symbol; other FiveAM internals stay locked.
+#+sbcl
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (declaim (sb-ext:disable-package-locks fiveam:fail)))
+
+(test with-test-deadline-fires-on-overrun
+  "Body that exceeds the deadline triggers a watchdog interrupt that
+calls FAIL with the supplied description. We shadow FAIL with a
+local FLET so the interrupt closure (which captures lexical scope)
+records the firing into our test rather than failing a real FiveAM
+assertion."
+  (let ((fired nil)
+        (caught-msg nil))
+    (flet ((fail (msg)
+             (setf fired t
+                   caught-msg msg)
+             ':sentinel))
+      (with-test-deadline (0.05 "overrun-marker")
+        (sleep 0.4)))
+    (is-true fired
+             "watchdog should have fired on (sleep 0.4) under a 0.05s deadline")
+    (is (and (stringp caught-msg)
+             (search "overrun-marker" caught-msg))
+        "FAIL message should include the deadline description; got ~s"
+        caught-msg)))
+
+(test with-test-deadline-no-orphan-throw-near-boundary
+  "Race regression: when the body finishes a hair before the deadline,
+the watchdog may already have queued its bt2:interrupt-thread. Once
+delivered, the interrupt closure must observe body-done=T and return
+silently — never return-from a tag that's already unwound. Without
+the guard, this signaled CANT-THROW-ERROR on CCL on every iteration
+where the window aligned. We run the boundary case many times to
+shake the race window."
+  (finishes
+    (dotimes (i 25)
+      (declare (ignorable i))
+      (with-test-deadline (0.05 "boundary")
+        (sleep 0.04)))))
 
 ;;; ---------------------------------------------------------------------
 ;;; 1. Package + export integrity
