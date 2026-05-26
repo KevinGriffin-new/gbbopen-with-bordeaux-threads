@@ -1,0 +1,98 @@
+# GitHub Actions CI for gbbopen-with-bordeaux-threads — aarch64 only.
+#
+# This complements the sr.ht builds at .builds/amd64.yml (which cover
+# x86_64). sr.ht's public builders don't support aarch64 (see
+# https://man.sr.ht/builds.sr.ht/compatibility.md — only x86_64 has
+# the green check across every image family), so the ARM64 coverage
+# has to live somewhere else. GitHub provides free `ubuntu-24.04-arm`
+# runners for public repos, which is the only zero-cost option today.
+#
+# Triggered on every push to master and on every pull request. Same
+# task sequence as the sr.ht amd64 build:
+#
+#   1. Install SBCL + ECL via apt (Ubuntu 24.04 noble has both).
+#   2. Install Quicklisp and the Ultralisp dist (stock Quicklisp's
+#      bordeaux-threads is the 0.9.x line without :bordeaux-threads-2;
+#      Ultralisp tracks the master snapshot that has it).
+#   3. Symlink the checkout into ~/quicklisp/local-projects/ so the
+#      shim system is quickloadable.
+#   4. Smoke-test (ql:quickload :gbbopen-with-bordeaux-threads).
+#   5. Run the FiveAM shim suite (sbcl + ecl both invoked).
+#   6. Run the tutorial under SBCL.
+#
+# Uploads artifacts/tutorial-output-sbcl.txt on success (the per-build
+# transient artifact, not the committed canonical reference).
+
+name: aarch64
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch: {}
+
+jobs:
+  aarch64-linux:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Lisp implementations
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            sbcl ecl curl ca-certificates
+          echo "--- SBCL version ---"; sbcl --version
+          echo "--- ECL version  ---"; ecl --version || true
+
+      - name: Install Quicklisp + Ultralisp dist
+        run: |
+          curl -fsSL -o /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+          sbcl --non-interactive --no-userinit --no-sysinit \
+               --load /tmp/quicklisp.lisp \
+               --eval '(quicklisp-quickstart:install)' \
+               --eval '(ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)' \
+               --eval '(ql:quickload :bordeaux-threads :silent t)' \
+               --eval "(format t \"~&;;; bordeaux-threads version: ~a~%\" (asdf:component-version (asdf:find-system :bordeaux-threads)))" \
+               --eval "(format t \"~&;;; :bordeaux-threads-2 present: ~a~%\" (and (find-package :bordeaux-threads-2) t))"
+
+      - name: Symlink repo into ~/quicklisp/local-projects/
+        run: |
+          ln -sf "$GITHUB_WORKSPACE" "$HOME/quicklisp/local-projects/gbbopen-with-bordeaux-threads"
+          sbcl --non-interactive --no-userinit --no-sysinit \
+               --eval "(load \"$HOME/quicklisp/setup.lisp\")" \
+               --eval '(ql:register-local-projects)'
+
+      - name: Smoke-test (ql:quickload :gbbopen-with-bordeaux-threads)
+        env:
+          QUICKLISP_SETUP: /home/runner/quicklisp/setup.lisp
+        run: |
+          sbcl --non-interactive --no-userinit --no-sysinit \
+               --eval "(load \"$QUICKLISP_SETUP\")" \
+               --eval '(ql:quickload :gbbopen-with-bordeaux-threads :silent t)' \
+               --eval "(format t \"~&;;; (find-package :gbbopen) = ~a~%\" (and (find-package :gbbopen) t))" \
+               --eval "(format t \"~&;;; (find-package :portable-threads) = ~a~%\" (and (find-package :portable-threads) t))" \
+               --eval "(format t \"~&;;; shim version = ~a~%\" (symbol-value (find-symbol \"PORTABLE-THREADS-IMPLEMENTATION-VERSION\" :portable-threads)))"
+
+      - name: Shim test suite (SBCL + ECL)
+        env:
+          QUICKLISP_SETUP: /home/runner/quicklisp/setup.lisp
+        run: ./run-tests.sh
+
+      - name: Tutorial run (SBCL)
+        env:
+          QUICKLISP_SETUP: /home/runner/quicklisp/setup.lisp
+        run: ./run-tutorial.sh
+
+      - name: Upload tutorial artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tutorial-output-sbcl-aarch64
+          path: artifacts/tutorial-output-sbcl.txt
+          if-no-files-found: warn
+          retention-days: 30

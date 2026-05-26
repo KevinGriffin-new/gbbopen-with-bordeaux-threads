@@ -1,9 +1,11 @@
 # sr.ht continuous-integration build for gbbopen-with-bordeaux-threads
 # — amd64 (x86_64) variant.
 #
-# Sibling: .builds/aarch64.yml runs the same flow under ARM64. sr.ht
-# kicks off every file in .builds/ as a separate parallel build on
-# every push.
+# sr.ht's public builders are x86_64-only (verified against the
+# compatibility matrix at https://man.sr.ht/builds.sr.ht/
+# compatibility.md — only the amd64 row has the green checkmark
+# across every image family). ARM64 coverage is therefore handled
+# on GitHub Actions side; see .github/workflows/aarch64.yml.
 #
 # Runs on every push. Installs SBCL + ECL + Quicklisp + Ultralisp
 # (the bt2 API lives in master snapshots that Ultralisp tracks; stock
