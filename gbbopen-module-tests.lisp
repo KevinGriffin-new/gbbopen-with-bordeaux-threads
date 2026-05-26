@@ -55,7 +55,7 @@
   (error (e)
     (format t "~&;;; gbbopen-module-tests: compile-gbbopen FAILED: ~a~%" e)
     (force-output)
-    (sb-ext:exit :code 1)))
+    (uiop:quit 1)))
 (format t "~&~%;;; gbbopen-module-tests: compile-gbbopen done.~%~%")
 (force-output)
 
