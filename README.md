@@ -82,7 +82,7 @@ First load takes 30–60 s (full compile); subsequent loads in the same
 or different sessions reuse the per-impl `.fasl` cache under
 `gbbopen/<impl>-<version>/`.
 
-### Run the shim's test suite (SBCL + ECL)
+### Run the shim's test suite (SBCL + CCL + ECL)
 
 ```sh
 ./run-tests.sh
@@ -90,10 +90,21 @@ or different sessions reuse the per-impl `.fasl` cache under
 
 Multi-implementation runner — auto-detects which Lisps are on PATH,
 runs the FiveAM suite under each, exits 0 only if every available
-impl passes. Use `IMPLS=sbcl` (or `ecl`) to restrict to one.
+impl passes. Use `IMPLS=sbcl` (or `ccl`, `ecl`) to restrict to one.
 Wall time: ~6 s total on this machine.
 
-Current state: **SBCL 191/191, ECL 182/182, both green.**
+Current state (2026-05-26): **SBCL 196/196, CCL 187/187 all green
+on the local x86_64 dev box; ECL last verified at 182/182 in
+amd64 CI.** Per-impl totals differ because several memleak tests
+are gated `#+sbcl` (they probe SBCL's exact GC-and-thread-cleanup
+contract); other tests run on every impl.
+
+For CCL: `IMPLS=ccl ./run-tests.sh` looks for `ccl64` on `PATH`. If
+you want to test a specific kernel (e.g. `/usr/local/ccl/dx86cl64`),
+set `CCL_BIN` to the kernel path — the script's `_ccl_env` helper
+detects an adjacent `.image` and supplies `CCL_DEFAULT_DIRECTORY`
+itself. See "Testing on multiple CCL versions" below for the
+multi-binary recipe.
 
 ### Run GBBopen's own ten test/example modules
 
@@ -113,12 +124,60 @@ Each wrapper plain-loads the module's source via
 `run-tests.sh` (~30–60 s on first run because of `compile-gbbopen`);
 subsequent runs benefit from the `.fasl` cache.
 
-Currently SBCL-only by default. `IMPLS=ecl ./run-gbbopen-tests.sh`
-will attempt ECL but is expected to fail until GBBopen-on-ECL has
-its own analog of the PR-A patch series.
+SBCL and CCL both pass cleanly (SBCL 12/12, CCL 12/12 as of
+2026-05-26 including the redefinition-stress regression). ECL is
+wired up but is expected to fail until GBBopen-on-ECL has its own
+analog of the PR-A patch series. `IMPLS="sbcl ccl"` is the
+recommended set; add `ecl` only when you're working on ECL support.
+
+The harness treats `:FAILED-ASSERTS` (one or more `;; ***` markers
+from GBBopen's own `LOG-ERROR`) as a soft pass with the count
+printed prominently, and `:ERRORED` (compile failure, unbound
+symbol, escaped condition) as a hard fail. A few stable markers
+exist as known per-impl tolerances — SBCL can't introspect a
+`makunbound`'d LET binding in another thread, bt2's dead-thread
+eviction races GBBopen's half-second cleanup window. New errors
+fail CI; a marker-count baseline is on the future-work list.
 
 Captured output goes to `artifacts/gbbopen-tests-<impl>.txt`, which
 is `.gitignore`'d — see commit `a730c9e` for why.
+
+### Testing on multiple CCL versions
+
+The shim was developed against three CCL builds on the same x86_64
+Mac. The test scripts accept two env vars for picking between them:
+
+```sh
+# Bare kernel (most direct):
+CCL_BIN=/usr/local/ccl/dx86cl64 \
+  XDG_CACHE_HOME=$HOME/.cache-ccl-usrlocal \
+  ARTIFACT_LABEL=ccl-usrlocal \
+  IMPLS=ccl ./run-tests.sh
+
+# CCL wrapper script (MacPorts / Linux distro packages):
+CCL_BIN=/opt/local/bin/ccl64 \
+  XDG_CACHE_HOME=$HOME/.cache-ccl-macports \
+  ARTIFACT_LABEL=ccl-macports \
+  IMPLS=ccl ./run-tests.sh
+```
+
+`CCL_BIN` — path to either a kernel (`dx86cl64`, `lx86cl64`, …) or a
+wrapper (`ccl64`). The `_ccl_env` helper inside `run-tests.sh` checks
+for an adjacent `.image` file: if present, it's a kernel and the
+helper exports `CCL_DEFAULT_DIRECTORY=$(dirname "$CCL_BIN")`; if not,
+it's a wrapper and the helper leaves `CCL_DEFAULT_DIRECTORY` alone
+so the wrapper can supply its own default.
+
+`XDG_CACHE_HOME` — ASDF's per-impl cache key collapses post-release
+CCL 1.13 builds (e.g. `v1.13-20-gcc834499`) onto the same directory
+as the release `v1.13`, so a FASL compiled by one version can be
+loaded by the other and crash with `No package ASDF/SYSTEM-REGISTRY`.
+Setting `XDG_CACHE_HOME` to a per-binary path isolates them.
+
+`ARTIFACT_LABEL` — overrides the suffix in
+`artifacts/gbbopen-tests-<label>.txt` and the log file under `/tmp`
+so multiple runs against different CCL binaries don't clobber each
+other.
 
 ### Run the GBBopen tutorial end-to-end
 
@@ -242,8 +301,12 @@ other doesn't:
 
 | Provider | Arch | Coverage | Config file |
 |---|---|---|---|
-| [builds.sr.ht](https://builds.sr.ht/~kevin_griffin) | x86_64 (amd64) | shim suite (SBCL + ECL), tutorial run, smoke quickload | `.builds/amd64.yml` |
-| [GitHub Actions](https://github.com/KevinGriffin-new/gbbopen-with-bordeaux-threads/actions) | aarch64 (ARM64) — same arch as Raspberry Pi 4/5 | same task sequence under Ubuntu 24.04 ARM | `.github/workflows/aarch64.yml` |
+| [builds.sr.ht](https://builds.sr.ht/~kevin_griffin) | x86_64 (amd64) | shim suite (SBCL + CCL + ECL), GBBopen module tests (SBCL + CCL), tutorial run, smoke quickload | `.builds/amd64.yml` |
+| [GitHub Actions](https://github.com/KevinGriffin-new/gbbopen-with-bordeaux-threads/actions) | aarch64 (ARM64) — same arch as Raspberry Pi 4/5 | shim suite (SBCL + ECL), GBBopen module tests (SBCL), tutorial run, smoke quickload | `.github/workflows/aarch64.yml` |
+
+CCL coverage lives on the sr.ht amd64 build alone — Clozure 1.13
+ships no aarch64-Linux release tarball, so the GH Actions side runs
+SBCL/ECL only. Promote when an aarch64 CCL build is published.
 
 sr.ht is the canonical CI; GitHub is reached by an automated push
 step in the sr.ht amd64 build (only fires after the sr.ht tests
