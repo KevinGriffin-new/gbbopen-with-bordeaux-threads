@@ -197,11 +197,38 @@ exposes. Pinned for visibility, not for action.
   upstream commit).
 - **Patches applied**: 8 SBCL-compat commits documented in
   `gbbopen/PATCHES-APPLIED.txt` and visible in `git log`.
-- **Shim home**: this repo at
+- **Shim home (canonical)**: this repo at
   [git.sr.ht/~kevin_griffin/gbbopen-with-bordeaux-threads](https://git.sr.ht/~kevin_griffin/gbbopen-with-bordeaux-threads).
+  This is the source-of-truth — open issues and send patches here.
+- **GitHub mirror (CI only)**: a copy at
+  [github.com/KevinGriffin-new/gbbopen-with-bordeaux-threads](https://github.com/KevinGriffin-new/gbbopen-with-bordeaux-threads)
+  is automatically updated from sr.ht on every push. Its only role
+  is hosting `.github/workflows/aarch64.yml` — GitHub Actions
+  provides free ARM64 Linux runners that sr.ht's public builders
+  don't (see CI section below). The GitHub repo accepts no direct
+  pushes; any commit there came through sr.ht.
 - **Original GBBopen documentation**: the upstream tree's
   `gbbopen/hyperdoc/index.html` (substantial — reference manual,
   command refcard, full tutorial walkthrough). Not duplicated here.
+
+## CI
+
+Two providers run on every push, each covering an architecture the
+other doesn't:
+
+| Provider | Arch | Coverage | Config file |
+|---|---|---|---|
+| [builds.sr.ht](https://builds.sr.ht/~kevin_griffin) | x86_64 (amd64) | shim suite (SBCL + ECL), tutorial run, smoke quickload | `.builds/amd64.yml` |
+| [GitHub Actions](https://github.com/KevinGriffin-new/gbbopen-with-bordeaux-threads/actions) | aarch64 (ARM64) — same arch as Raspberry Pi 4/5 | same task sequence under Ubuntu 24.04 ARM | `.github/workflows/aarch64.yml` |
+
+sr.ht is the canonical CI; GitHub is reached by an automated push
+step in the sr.ht amd64 build (only fires after the sr.ht tests
+themselves pass, so the GitHub mirror only ever contains
+green-on-sr.ht commits). sr.ht's compatibility matrix at
+[man.sr.ht/builds.sr.ht/compatibility.md](https://man.sr.ht/builds.sr.ht/compatibility.md)
+has ARM64 unsupported across every image; GitHub Actions provides
+free aarch64 runners for public repos as of 2024, making the split
+the natural way to get both architectures covered at zero cost.
 
 ## License
 
