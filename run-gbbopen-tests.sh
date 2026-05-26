@@ -7,9 +7,14 @@
 # before the test walk, so expect ~30–60 seconds per impl on first
 # run (subsequent runs benefit from the .fasl cache).
 #
-# Currently SBCL only by default. ECL is wired up but requires
-# GBBopen to build on ECL, which is a separate work item — set
-# IMPLS=ecl explicitly to attempt it.
+# Currently SBCL only by default. CCL and ECL are wired up; ECL
+# additionally requires GBBopen to build on ECL, which is a separate
+# work item. Set IMPLS="sbcl ccl" (or just ccl/ecl) to opt in.
+#
+# For CCL, set CCL_BIN to point at a specific kernel/wrapper (e.g.
+# /usr/local/ccl/dx86cl64). If unset, the script looks for ccl64 on
+# PATH. CCL_DEFAULT_DIRECTORY is derived from CCL_BIN's dirname so
+# the kernel can find its heap image.
 #
 # Exit 0 if every available impl passes, 1 if any failed, 2 if no
 # impls were available.
@@ -49,6 +54,30 @@ run_sbcl() {
   return "${PIPESTATUS[0]}"
 }
 
+_ccl_env() {
+  # Set CCL_DEFAULT_DIRECTORY only when CCL_BIN looks like a bare
+  # kernel (has an adjacent .image file). Wrappers like ccl64 carry
+  # their own default and would be broken by us overriding it.
+  if [ -z "${CCL_DEFAULT_DIRECTORY:-}" ] && [ -f "${CCL_BIN}.image" ]; then
+    echo "CCL_DEFAULT_DIRECTORY=$(dirname "$CCL_BIN")"
+  fi
+}
+
+run_ccl() {
+  local artifact="$1"
+  # --no-init skips ~/.ccl-init.lisp (we load Quicklisp explicitly).
+  # --batch makes errors exit instead of dropping into the listener.
+  env $(_ccl_env) "$CCL_BIN" --no-init --batch --quiet \
+      --eval "(load \"$QL_SETUP\")" \
+      --eval '(ql:quickload :bordeaux-threads :silent t)' \
+      --load "$GBBOPEN_DIR/initiate.lisp" \
+      --eval '(ql:quickload :fiveam :silent t)' \
+      --load "$TESTS" \
+      --eval '(ccl:quit (gbbopen-module-tests:run-suite))' \
+      2>&1 | tee "$artifact"
+  return "${PIPESTATUS[0]}"
+}
+
 run_ecl() {
   local artifact="$1"
   ecl --norc \
@@ -69,6 +98,11 @@ declare -a SUMMARY=()
 for impl in $IMPLS; do
   case "$impl" in
     sbcl|SBCL) bin=sbcl; runner=run_sbcl ;;
+    ccl|CCL)
+      CCL_BIN="${CCL_BIN:-$(command -v ccl64 || true)}"
+      bin="$CCL_BIN"
+      runner=run_ccl
+      ;;
     ecl|ECL)   bin=ecl;  runner=run_ecl  ;;
     *)
       echo "WARN: unknown impl '$impl', skipping" >&2
@@ -76,12 +110,17 @@ for impl in $IMPLS; do
       ;;
   esac
 
-  if ! command -v "$bin" >/dev/null 2>&1; then
+  if [ "$impl" = "ccl" ] || [ "$impl" = "CCL" ]; then
+    if [ -z "${bin:-}" ] || [ ! -x "$bin" ]; then
+      SUMMARY+=("$impl: SKIP (no CCL_BIN set and ccl64 not on PATH)")
+      continue
+    fi
+  elif ! command -v "$bin" >/dev/null 2>&1; then
     SUMMARY+=("$impl: SKIP (binary not on PATH)")
     continue
   fi
 
-  artifact="$ARTIFACTS_DIR/gbbopen-tests-$impl.txt"
+  artifact="$ARTIFACTS_DIR/gbbopen-tests-${ARTIFACT_LABEL:-$impl}.txt"
   echo "============================================================"
   echo "Running GBBopen module tests under $impl"
   echo "  artifact: $artifact"

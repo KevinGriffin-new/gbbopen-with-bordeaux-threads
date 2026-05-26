@@ -2,13 +2,19 @@
 # Run the FiveAM test suite for the bt2-targeting portable-threads
 # shim under every supported Common Lisp implementation found on PATH.
 #
-# Currently supported: SBCL, ECL.
+# Currently supported: SBCL, CCL, ECL.
 #
 # Exits 0 only if EVERY available implementation passes the suite.
 # Exits 1 if any pass-able implementation fails, 2 if no
 # implementations were found at all.
 #
-# Use IMPLS=sbcl (or IMPLS=ecl) to restrict to a single implementation.
+# Use IMPLS=sbcl (or IMPLS=ccl, IMPLS=ecl) to restrict to a single
+# implementation.
+#
+# For CCL, set CCL_BIN to point at a specific kernel/wrapper (e.g.
+# /usr/local/ccl/dx86cl64). If unset, the script looks for ccl64 on
+# PATH. CCL_DEFAULT_DIRECTORY is derived from CCL_BIN's dirname so
+# the kernel can find its heap image.
 
 set -u
 
@@ -41,6 +47,27 @@ run_sbcl() {
        --eval '(uiop:quit (portable-threads/test:run-tests))'
 }
 
+_ccl_env() {
+  # Set CCL_DEFAULT_DIRECTORY only when CCL_BIN looks like a bare
+  # kernel (has an adjacent .image file). Wrappers like ccl64 carry
+  # their own default and would be broken by us overriding it.
+  if [ -z "${CCL_DEFAULT_DIRECTORY:-}" ] && [ -f "${CCL_BIN}.image" ]; then
+    echo "CCL_DEFAULT_DIRECTORY=$(dirname "$CCL_BIN")"
+  fi
+}
+
+run_ccl() {
+  # --no-init skips ~/.ccl-init.lisp (we load Quicklisp explicitly).
+  # --batch makes errors exit instead of dropping into the listener.
+  env $(_ccl_env) "$CCL_BIN" --no-init --batch --quiet \
+      --eval "(load \"$QL_SETUP\")" \
+      --eval '(ql:quickload :bordeaux-threads :silent t)' \
+      --load "$SHIM" \
+      --eval '(ql:quickload :fiveam :silent t)' \
+      --load "$TESTS" \
+      --eval '(ccl:quit (portable-threads/test:run-tests))'
+}
+
 run_ecl() {
   # --norc skips ~/.eclrc; --eval / --load / --shell work like SBCL's.
   ecl --norc \
@@ -61,6 +88,11 @@ declare -a SUMMARY=()
 for impl in $IMPLS; do
   case "$impl" in
     sbcl|SBCL) bin=sbcl; runner=run_sbcl ;;
+    ccl|CCL)
+      CCL_BIN="${CCL_BIN:-$(command -v ccl64 || true)}"
+      bin="$CCL_BIN"
+      runner=run_ccl
+      ;;
     ecl|ECL)   bin=ecl;  runner=run_ecl  ;;
     *)
       echo "WARN: unknown impl '$impl', skipping" >&2
@@ -68,13 +100,24 @@ for impl in $IMPLS; do
       ;;
   esac
 
-  if ! command -v "$bin" >/dev/null 2>&1; then
+  # For ccl we accept either an absolute path (CCL_BIN) or a PATH lookup.
+  if [ "$impl" = "ccl" ] || [ "$impl" = "CCL" ]; then
+    if [ -z "${bin:-}" ] || [ ! -x "$bin" ]; then
+      SUMMARY+=("$impl: SKIP (no CCL_BIN set and ccl64 not on PATH)")
+      continue
+    fi
+  elif ! command -v "$bin" >/dev/null 2>&1; then
     SUMMARY+=("$impl: SKIP (binary not on PATH)")
     continue
   fi
 
-  version="$("$bin" --version 2>&1 | head -1)"
-  log="/tmp/portable-threads-tests-$impl.log"
+  if [ "$impl" = "ccl" ] || [ "$impl" = "CCL" ]; then
+    version="$(CCL_BIN="$bin" env $(_ccl_env) "$bin" --no-init --batch --quiet \
+                 -e '(progn (princ (lisp-implementation-version))(terpri)(ccl:quit))' 2>&1 | head -1)"
+  else
+    version="$("$bin" --version 2>&1 | head -1)"
+  fi
+  log="/tmp/portable-threads-tests-${ARTIFACT_LABEL:-$impl}.log"
 
   echo "============================================================"
   echo "Running suite under $impl ($version)"
