@@ -7,20 +7,25 @@
 # across every image family). ARM64 coverage is therefore handled
 # on GitHub Actions side; see .github/workflows/aarch64.yml.
 #
-# Runs on every push. Installs SBCL + ECL + Quicklisp + Ultralisp
-# (the bt2 API lives in master snapshots that Ultralisp tracks; stock
-# Quicklisp's bordeaux-threads is the older 0.9.x line, which doesn't
-# expose the :bordeaux-threads-2 package the shim requires). Then:
+# Runs on every push. Installs SBCL + CCL + ECL + Quicklisp +
+# Ultralisp (the bt2 API lives in master snapshots that Ultralisp
+# tracks; stock Quicklisp's bordeaux-threads is the older 0.9.x line,
+# which doesn't expose the :bordeaux-threads-2 package the shim
+# requires). CCL comes from the upstream Clozure release tarball
+# rather than the system package manager so we pin to a known
+# version (1.13). Then:
 #
 #   1. Symlinks the cloned repo into ~/quicklisp/local-projects/ so
 #      the shim system is quickloadable.
 #   2. Smoke-tests (ql:quickload :gbbopen-with-bordeaux-threads)
 #      under SBCL to prove the .asd wiring works end-to-end.
 #   3. Runs the shim's FiveAM suite under every Lisp on PATH
-#      (currently SBCL + ECL) via run-tests.sh.
-#   4. Runs the GBBopen tutorial under SBCL (run-tutorial.sh
-#      defaults to SBCL-only because GBBopen-on-ECL is a separate
-#      unverified work item).
+#      (SBCL + CCL + ECL) via run-tests.sh.
+#   4. Runs the GBBopen module tests (run-gbbopen-tests.sh) under
+#      SBCL + CCL. ECL is excluded because GBBopen itself doesn't
+#      build on ECL yet — separate work item.
+#   5. Runs the GBBopen tutorial under SBCL (run-tutorial.sh
+#      defaults to SBCL-only for the same reason).
 #
 # Uploads the fresh tutorial-output artifact so build history at
 # builds.sr.ht keeps a per-build copy for inspection. The committed
@@ -56,6 +61,23 @@ tasks:
            --eval "(format t \"~&;;; bordeaux-threads version: ~a~%\" (asdf:component-version (asdf:find-system :bordeaux-threads)))" \
            --eval "(format t \"~&;;; :bordeaux-threads-2 present: ~a~%\" (and (find-package :bordeaux-threads-2) t))"
 
+  # Install CCL 1.13 from the Clozure GitHub release. We pin to the
+  # tarball instead of using a system package (Arch's `ccl` is in AUR,
+  # not the official repos, so it would be a second-class dependency
+  # on sr.ht's clean image). The tarball ships scripts/ccl64 with a
+  # /usr/local/src/ccl default — we bypass that by passing CCL_BIN
+  # pointing at the kernel directly; run-tests.sh's _ccl_env helper
+  # detects the adjacent .image and sets CCL_DEFAULT_DIRECTORY itself.
+  - install_ccl: |
+      curl -fsSL -o /tmp/ccl.tar.gz \
+        https://github.com/Clozure/ccl/releases/download/v1.13/ccl-1.13-linuxx86.tar.gz
+      sudo tar -C /usr/local -xzf /tmp/ccl.tar.gz
+      ls -la /usr/local/ccl/lx86cl64 /usr/local/ccl/lx86cl64.image
+      echo "--- CCL version ---"
+      CCL_DEFAULT_DIRECTORY=/usr/local/ccl /usr/local/ccl/lx86cl64 \
+        --no-init --batch --quiet \
+        -e '(progn (princ (lisp-implementation-version)) (terpri) (ccl:quit))'
+
   - setup_local_projects: |
       ln -sf "$HOME/gbbopen-with-bordeaux-threads" \
              "$HOME/quicklisp/local-projects/gbbopen-with-bordeaux-threads"
@@ -74,7 +96,19 @@ tasks:
 
   - shim_tests: |
       cd "$HOME/gbbopen-with-bordeaux-threads"
-      ./run-tests.sh
+      IMPLS="sbcl ccl ecl" \
+        CCL_BIN=/usr/local/ccl/lx86cl64 \
+        ./run-tests.sh
+
+  # Per-build XDG_CACHE_HOME isolates CCL's FASL cache (ASDF's cache
+  # key collapses post-release CCL 1.13 builds onto the same dir as
+  # release 1.13 — see investigation notes from 2026-05-26).
+  - gbbopen_tests: |
+      cd "$HOME/gbbopen-with-bordeaux-threads"
+      IMPLS="sbcl ccl" \
+        CCL_BIN=/usr/local/ccl/lx86cl64 \
+        XDG_CACHE_HOME="$HOME/.cache-ccl-amd64" \
+        ./run-gbbopen-tests.sh
 
   - tutorial: |
       cd "$HOME/gbbopen-with-bordeaux-threads"
@@ -129,3 +163,5 @@ tasks:
 
 artifacts:
   - gbbopen-with-bordeaux-threads/artifacts/tutorial-output-sbcl.txt
+  - gbbopen-with-bordeaux-threads/artifacts/gbbopen-tests-sbcl.txt
+  - gbbopen-with-bordeaux-threads/artifacts/gbbopen-tests-ccl.txt

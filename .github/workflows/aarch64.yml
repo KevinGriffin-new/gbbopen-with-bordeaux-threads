@@ -7,9 +7,18 @@
 # has to live somewhere else. GitHub provides free `ubuntu-24.04-arm`
 # runners for public repos, which is the only zero-cost option today.
 #
-# Triggered on every push to master and on every pull request. Same
-# task sequence as the sr.ht amd64 build:
+# Triggered on every push to master and on every pull request. Mostly
+# parallel to the sr.ht amd64 build, but with two coverage gaps:
 #
+#   - CCL: Clozure 1.13 ships no aarch64-Linux release binary
+#     (Darwin/x86, Linux/x86, Linux/arm32, Windows/x86, FreeBSD/x86
+#     only). The CCL coverage therefore lives on the sr.ht amd64
+#     build alone. Promote here when an aarch64 build is published.
+#   - run-gbbopen-tests.sh runs SBCL only for the same reason — the
+#     module tests are the same suite under both runners, so amd64
+#     CCL coverage is the practical CCL story.
+#
+# Task sequence:
 #   1. Install SBCL + ECL via apt (Ubuntu 24.04 noble has both).
 #   2. Install Quicklisp and the Ultralisp dist (stock Quicklisp's
 #      bordeaux-threads is the 0.9.x line without :bordeaux-threads-2;
@@ -18,10 +27,12 @@
 #      shim system is quickloadable.
 #   4. Smoke-test (ql:quickload :gbbopen-with-bordeaux-threads).
 #   5. Run the FiveAM shim suite (sbcl + ecl both invoked).
-#   6. Run the tutorial under SBCL.
+#   6. Run the GBBopen module tests under SBCL.
+#   7. Run the tutorial under SBCL.
 #
-# Uploads artifacts/tutorial-output-sbcl.txt on success (the per-build
-# transient artifact, not the committed canonical reference).
+# Uploads the per-build tutorial output and gbbopen-tests SBCL
+# artifact on success (transient build artifacts, not the committed
+# canonical references in artifacts/).
 
 name: aarch64
 
@@ -83,6 +94,11 @@ jobs:
           QUICKLISP_SETUP: /home/runner/quicklisp/setup.lisp
         run: ./run-tests.sh
 
+      - name: GBBopen module tests (SBCL)
+        env:
+          QUICKLISP_SETUP: /home/runner/quicklisp/setup.lisp
+        run: IMPLS=sbcl ./run-gbbopen-tests.sh
+
       - name: Tutorial run (SBCL)
         env:
           QUICKLISP_SETUP: /home/runner/quicklisp/setup.lisp
@@ -94,5 +110,14 @@ jobs:
         with:
           name: tutorial-output-sbcl-aarch64
           path: artifacts/tutorial-output-sbcl.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload gbbopen-tests artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gbbopen-tests-sbcl-aarch64
+          path: artifacts/gbbopen-tests-sbcl.txt
           if-no-files-found: warn
           retention-days: 30
