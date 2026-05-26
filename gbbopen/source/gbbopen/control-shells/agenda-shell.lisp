@@ -596,19 +596,37 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun add-ks-triggers (ks)
+  ;; Tolerate KS instances whose trigger-event slots aren't yet bound.
+  ;; We get called via SHARED-INITIALIZE :AROUND, which fires not only
+  ;; on MAKE-INSTANCE / REINITIALIZE-INSTANCE but also on CCL's
+  ;; UPDATE-OBSOLETE-INSTANCE — including for the class PROTOTYPE
+  ;; when the KS unit-class has been redefined (a routine occurrence
+  ;; when a test module file is loaded after compile-gbbopen has
+  ;; already established the class). The prototype's slots are
+  ;; unbound at that point and slot-value would signal UNBOUND-SLOT,
+  ;; aborting whatever triggered the access — observed in practice
+  ;; when DELETE-BLACKBOARD-REPOSITORY → RESET-UNIT-CLASS →
+  ;; INITIAL-CLASS-INSTANCE-NUMBER on the prototype propagates the
+  ;; error and leaves the iteration half-done. SBCL's prototype
+  ;; handling does not invoke this method in the same path, so the
+  ;; gap was CCL-specific. Skipping when the slots aren't bound is
+  ;; semantically correct: there are no triggers to register yet.
   (flet ((setup (trigger-events ks-triggers-slot-name)
            (dolist (trigger-event trigger-events)
              (apply #'add-event-function nil
-                    (append trigger-event 
+                    (append trigger-event
                             `(:evfn-blk-fn add-ks-trigger-to-evfn-blk
-                              :evfn-blk-fn-args 
+                              :evfn-blk-fn-args
                                  (,ks ,ks-triggers-slot-name)))))))
     ;; trigger events:
-    (setup (trigger-events-of ks) 'triggers)
+    (when (slot-boundp ks 'trigger-events)
+      (setup (trigger-events-of ks) 'triggers))
     ;; obviation events:
-    (setup (obviation-events-of ks) 'obviation-triggers)
+    (when (slot-boundp ks 'obviation-events)
+      (setup (obviation-events-of ks) 'obviation-triggers))
     ;; retrigger events:
-    (setup (retrigger-events-of ks) 'retriggers)))
+    (when (slot-boundp ks 'retrigger-events)
+      (setup (retrigger-events-of ks) 'retriggers))))
 
 ;;; ---------------------------------------------------------------------------
 
