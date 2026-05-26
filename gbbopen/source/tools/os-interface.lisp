@@ -237,13 +237,17 @@
                               ;; Search PATH for the program when a bare name
                               ;; (e.g. ps) rather than an absolute path is
                               ;; supplied. SBCL's sb-ext:run-program (and the
-                              ;; analogous CMU/Clozure/SCL primitives) require
-                              ;; this flag; without it, a bare program name
-                              ;; fails with No such file or directory even
-                              ;; when the binary is on PATH. Matches the
-                              ;; behaviour the CLISP branch documents two
-                              ;; cases above.
-                              :search t)))
+                              ;; analogous CMU/SCL primitives) require this
+                              ;; flag; without it, a bare program name fails
+                              ;; with No such file or directory even when the
+                              ;; binary is on PATH. CCL's ccl:run-program
+                              ;; already searches PATH via execvp() and
+                              ;; signals an "Incorrect keyword arguments"
+                              ;; error if handed :search, so omit there.
+                              ;; Matches the behaviour the CLISP branch
+                              ;; documents two cases above.
+                              #-clozure :search
+                              #-clozure t)))
     (values
      (when (or input output)
        (make-two-way-stream 
