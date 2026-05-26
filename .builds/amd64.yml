@@ -117,8 +117,15 @@ tasks:
         git remote set-url github "$GITHUB_MIRROR"
 
       # Push the just-tested commit to master on the mirror. ssh
-      # picks up ~/.ssh/id_rsa from its default search path.
-      git push github HEAD:master
+      # picks up ~/.ssh/id_rsa from its default search path. Use the
+      # fully-qualified refname (refs/heads/master, not just master)
+      # because an empty target repo has no existing refs to
+      # disambiguate against — git #1768531's first push failed with
+      # "The destination you provided is not a full refname". After
+      # the first successful push creates refs/heads/master remotely,
+      # subsequent pushes can use either form; the qualified form
+      # works for both first-push and steady-state, so use it always.
+      git push github HEAD:refs/heads/master
 
 artifacts:
   - gbbopen-with-bordeaux-threads/artifacts/tutorial-output-sbcl.txt
