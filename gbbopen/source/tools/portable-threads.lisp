@@ -156,14 +156,16 @@ specify deeper-nesting semantics, and the tests exercise depth-1
 only)."
   #+sbcl (sb-thread:release-mutex (bordeaux-threads-2:lock-native-lock bt2-lock))
   #+ecl  (mp:giveup-lock          (bordeaux-threads-2:lock-native-lock bt2-lock))
-  #-(or sbcl ecl)
+  #+ccl  (ccl:release-lock        (bordeaux-threads-2:lock-native-lock bt2-lock))
+  #-(or sbcl ecl ccl)
   (error "without-lock-held: native release not implemented on this Lisp."))
 
 (defun %native-acquire-lock (bt2-lock)
   "Reacquire BT2-LOCK at the native-mutex level."
   #+sbcl (sb-thread:grab-mutex (bordeaux-threads-2:lock-native-lock bt2-lock))
   #+ecl  (mp:get-lock          (bordeaux-threads-2:lock-native-lock bt2-lock))
-  #-(or sbcl ecl)
+  #+ccl  (ccl:grab-lock        (bordeaux-threads-2:lock-native-lock bt2-lock))
+  #-(or sbcl ecl ccl)
   (error "without-lock-held: native acquire not implemented on this Lisp."))
 
 (defun %call-without-lock-held (lock fn)
@@ -289,9 +291,16 @@ symbol-value via boundp/symbol-value — it cannot inspect another
 thread's dynamic binding stack. Cross-thread special-variable
 inspection is genuinely impossible on ECL with this API.
 
-bt2 wraps native threads in its own BT2:THREAD class, so on SBCL we
-dive through bt2:thread-native-thread to reach the sb-thread:thread
-that sb-thread:symbol-value-in-thread requires."
+NOTE on CCL: ccl:symbol-value-in-process DOES inspect the target
+process's binding stack (and falls through to the global value for
+symbols with no per-thread LET binding). Its API differs from
+sb-thread's in two ways: it returns one value instead of two, and
+it signals an error on truly-unbound symbols instead of returning
+(values nil nil). The handler-case below collapses both differences.
+
+bt2 wraps native threads in its own BT2:THREAD class, so on SBCL and
+CCL we dive through bt2:thread-native-thread to reach the underlying
+sb-thread:thread / ccl:process that the native API requires."
   ;; ignorable, not ignore — SBCL branch uses thread, others don't.
   ;; Declaring in the function prologue (not inside a progn) keeps
   ;; ECL happy; SBCL accepts misplaced declares silently but ECL is
@@ -324,7 +333,14 @@ that sb-thread:symbol-value-in-thread requires."
       (bound (values value t))
       ((boundp symbol) (values (symbol-value symbol) t))
       (t (values nil nil))))
-  #-sbcl
+  #+ccl
+  (handler-case
+      (values (ccl:symbol-value-in-process
+               symbol
+               (bordeaux-threads-2:thread-native-thread thread))
+              t)
+    (error () (values nil nil)))
+  #-(or sbcl ccl)
   (if (boundp symbol)
       (values (symbol-value symbol) t)
       (values nil nil)))
@@ -337,8 +353,11 @@ and condition-variable (extracts the embedded lock).
 
 bt2 does not expose lock-owner portably. SBCL: dive via
 bt2:lock-native-lock to an sb-thread:mutex and inspect mutex-value;
-ECL: dive to mp:lock and call mp:lock-owner. bt2 threads are wrapper
-objects, so dive bt2:thread-native-thread on both."
+ECL: dive to mp:lock and call mp:lock-owner; CCL: dive to a
+ccl::recursive-lock and call ccl::%%lock-owner (the bt2 native lock
+on CCL is always a recursive-lock, regardless of which bt2 maker
+created it). bt2 threads are wrapper objects, so dive
+bt2:thread-native-thread on all three."
   (let ((native-lock (bordeaux-threads-2:lock-native-lock
                       (cond
                         ((typep lock 'condition-variable)
@@ -348,7 +367,8 @@ objects, so dive bt2:thread-native-thread on both."
     (declare (ignorable native-lock native-thread))
     #+sbcl (eq (sb-thread:mutex-value native-lock) native-thread)
     #+ecl  (eq (mp:lock-owner native-lock) native-thread)
-    #-(or sbcl ecl) nil))
+    #+ccl  (eq (ccl::%%lock-owner native-lock) native-thread)
+    #-(or sbcl ecl ccl) nil))
 
 (defun thread-whostate (thread)
   "GBBopen-specific whostate concept. bt2 doesn't have it; return placeholder."
