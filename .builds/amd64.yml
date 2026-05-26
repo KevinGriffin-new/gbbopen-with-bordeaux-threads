@@ -89,21 +89,20 @@ tasks:
   - push_to_github: |
       set -eu
       cd "$HOME/gbbopen-with-bordeaux-threads"
-      # Defensive: only mirror master (sr.ht builds run on whatever
-      # ref was pushed; in practice that's master, but guard anyway).
-      branch="$(git rev-parse --abbrev-ref HEAD)"
-      if [ "$branch" != "master" ]; then
-        echo "Skipping GitHub mirror — branch is '$branch', not 'master'"
-        exit 0
-      fi
+      # NOTE: no branch-equality check here. sr.ht checks out the
+      # pushed commit in detached-HEAD state, so `git rev-parse
+      # --abbrev-ref HEAD` would return literal "HEAD", not "master",
+      # and a naive `[ "$branch" = master ]` guard would silently
+      # skip the push. We rely instead on sr.ht only triggering this
+      # build when a commit is actually pushed to the repo's master,
+      # and unconditionally push HEAD → github:master.
       # Pre-trust github.com to avoid the interactive host-key prompt.
       mkdir -p "$HOME/.ssh"
       ssh-keyscan -t ed25519,rsa github.com 2>/dev/null >> "$HOME/.ssh/known_hosts"
       # sr.ht installs the secret into ~/.ssh/ at the filename the
-      # secret was registered with. The default is id_ed25519; if a
-      # different filename was used, change the IdentityFile line.
-      chmod 600 "$HOME/.ssh/id_ed25519" 2>/dev/null || \
-        chmod 600 "$HOME/.ssh/"id_* 2>/dev/null || true
+      # secret was registered with. The chmod glob handles whichever
+      # filename was used (id_ed25519, id_rsa, etc.).
+      chmod 600 "$HOME/.ssh/"id_* 2>/dev/null || true
       git remote add github "$GITHUB_MIRROR" 2>/dev/null || \
         git remote set-url github "$GITHUB_MIRROR"
       # Push the just-tested commit to master on the mirror.
