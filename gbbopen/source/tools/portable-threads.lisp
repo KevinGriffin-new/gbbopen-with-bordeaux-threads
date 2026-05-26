@@ -124,6 +124,18 @@ still holding in its internal registry."
      (bordeaux-threads-2:with-lock-held ((condition-variable-lock lock))
        (funcall fn)))
     (t
+     ;; bt2:with-lock-held on CCL expands to ccl:with-lock-grabbed, which
+     ;; uses CCL's native (recursive) lock and silently allows re-entry on
+     ;; a plain lock. GBBopen's plain-lock contract — and the SBCL/ECL
+     ;; behaviour of bt2:with-lock-held — is "error on recursive entry."
+     ;; bt2:acquire-lock on CCL DOES check ccl::%%lock-owner and signals
+     ;; a bt-error on re-entry, so route through acquire/release on CCL
+     ;; to keep the observable contract uniform across implementations.
+     #+ccl
+     (progn (bordeaux-threads-2:acquire-lock lock)
+            (unwind-protect (funcall fn)
+              (bordeaux-threads-2:release-lock lock)))
+     #-ccl
      (bordeaux-threads-2:with-lock-held (lock) (funcall fn)))))
 
 (defun %call-with-recursive-lock-held (lock fn)
