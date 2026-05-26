@@ -40,11 +40,11 @@ sources:
 environment:
   QUICKLISP_SETUP: /home/build/quicklisp/setup.lisp
   GITHUB_MIRROR: git@github.com:KevinGriffin-new/gbbopen-with-bordeaux-threads.git
-# SSH private key for pushing the green-on-sr.ht state to the GitHub
-# mirror — see the push_to_github task at the bottom of this file.
-# Registered at https://builds.sr.ht/secrets.
+# SSH private key "build-farm" for pushing the green-on-sr.ht state
+# to the GitHub mirror — see the push_to_github task at the bottom
+# of this file. Registered at https://builds.sr.ht/secrets.
 secrets:
-  - 46f739e5-4538-45dd-a79f-bf173b7a2ed9
+  - a5db22eb-d8a8-4c00-bf65-b16b903f3d4d
 tasks:
   - install_quicklisp: |
       curl -fsSL -o /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
@@ -99,31 +99,28 @@ tasks:
       mkdir -p "$HOME/.ssh"
       ssh-keyscan -t ed25519,rsa github.com 2>/dev/null >> "$HOME/.ssh/known_hosts"
 
-      # Find the SSH key that sr.ht installed. Diagnostic-heavy because
-      # the secret-install path has surprised us once already — list
-      # ~/.ssh/, then broaden the search across the build environment
-      # if nothing was found there. Output goes to the build log.
-      echo "--- ~/.ssh/ contents: ---"
-      ls -la "$HOME/.ssh/" || true
-      echo "--- secret-related env vars: ---"
-      env | grep -iE 'secret|ssh|key' | grep -v '^_' || true
-      key_file=$(find "$HOME/.ssh/" -maxdepth 1 -type f \
-                      ! -name 'known_hosts' \
-                      ! -name 'authorized_keys' \
-                      ! -name 'config' \
-                      ! -name '*.pub' \
-                      | head -1)
+      # Locate the SSH key. sr.ht installs the secret at whichever
+      # path was specified when the secret was registered; per the
+      # repo owner the file is named "build-farm". Most likely
+      # locations: ~/.ssh/build-farm (conventional) or ~/build-farm
+      # (if the registration form was given a full ~-relative path).
+      key_file=""
+      for candidate in "$HOME/.ssh/build-farm" "$HOME/build-farm"; do
+        if [ -f "$candidate" ]; then
+          key_file="$candidate"
+          break
+        fi
+      done
       if [ -z "$key_file" ]; then
-        echo "--- nothing in ~/.ssh/; broader filesystem search: ---"
-        # Look anywhere a key-shaped file might have landed.
-        find "$HOME" /etc/secrets /root/.ssh /tmp -maxdepth 3 -type f \
-             \( -name 'id_*' -o -name '*.pem' -o -name '*key*' \) \
+        echo "ERROR: build-farm key not at expected paths. Filesystem search:"
+        echo "--- ~/.ssh/: ---"
+        ls -la "$HOME/.ssh/" || true
+        echo "--- ~ (top level): ---"
+        ls -la "$HOME/" || true
+        echo "--- broader: ---"
+        find "$HOME" /etc/secrets /tmp -maxdepth 3 -type f \
+             \( -name 'build-farm*' -o -name 'id_*' -o -name '*.pem' \) \
              2>/dev/null | grep -v '\.pub$' | head -20 || true
-        echo "--- (end of search) ---"
-        echo "ERROR: no private key file found — verify the sr.ht secret"
-        echo "       46f739e5-4538-45dd-a79f-bf173b7a2ed9 is (a) of type"
-        echo "       'SSH key', (b) owned by ~kevin_griffin, and (c) not"
-        echo "       restricted from this repo."
         exit 1
       fi
       echo "Using SSH identity: $key_file"
