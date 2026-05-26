@@ -99,39 +99,26 @@ tasks:
       mkdir -p "$HOME/.ssh"
       ssh-keyscan -t ed25519,rsa github.com 2>/dev/null >> "$HOME/.ssh/known_hosts"
 
-      # Locate the SSH key. sr.ht installs the secret at whichever
-      # path was specified when the secret was registered; per the
-      # repo owner the file is named "build-farm". Most likely
-      # locations: ~/.ssh/build-farm (conventional) or ~/build-farm
-      # (if the registration form was given a full ~-relative path).
-      key_file=""
-      for candidate in "$HOME/.ssh/build-farm" "$HOME/build-farm"; do
-        if [ -f "$candidate" ]; then
-          key_file="$candidate"
-          break
-        fi
-      done
-      if [ -z "$key_file" ]; then
-        echo "ERROR: build-farm key not at expected paths. Filesystem search:"
-        echo "--- ~/.ssh/: ---"
+      # sr.ht installs an SSH-key-type secret at ~/.ssh/<UUID> and
+      # creates an ~/.ssh/id_rsa symlink pointing at it (verified by
+      # the diagnostic in job #1768528). The name you give the secret
+      # at registration time ("build-farm") is just a UI label, not
+      # the install path. So the standard ssh default-identity search
+      # finds the key without any extra config — we only need to
+      # confirm the symlink is there as a sanity check.
+      if [ ! -e "$HOME/.ssh/id_rsa" ]; then
+        echo "ERROR: ~/.ssh/id_rsa missing — sr.ht did not install the SSH-key secret"
+        echo "       a5db22eb-d8a8-4c00-bf65-b16b903f3d4d. Contents of ~/.ssh/:"
         ls -la "$HOME/.ssh/" || true
-        echo "--- ~ (top level): ---"
-        ls -la "$HOME/" || true
-        echo "--- broader: ---"
-        find "$HOME" /etc/secrets /tmp -maxdepth 3 -type f \
-             \( -name 'build-farm*' -o -name 'id_*' -o -name '*.pem' \) \
-             2>/dev/null | grep -v '\.pub$' | head -20 || true
         exit 1
       fi
-      echo "Using SSH identity: $key_file"
-      chmod 600 "$key_file"
 
       git remote add github "$GITHUB_MIRROR" 2>/dev/null || \
         git remote set-url github "$GITHUB_MIRROR"
 
-      # Push the just-tested commit to master on the mirror.
-      GIT_SSH_COMMAND="ssh -i $key_file -o IdentitiesOnly=yes" \
-        git push github HEAD:master
+      # Push the just-tested commit to master on the mirror. ssh
+      # picks up ~/.ssh/id_rsa from its default search path.
+      git push github HEAD:master
 
 artifacts:
   - gbbopen-with-bordeaux-threads/artifacts/tutorial-output-sbcl.txt
